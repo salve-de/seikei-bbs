@@ -1,0 +1,23 @@
+{
+  "name": "political-economy-bulletin-board",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js",
+    "check": "node --check server.js && node --check public/shared.js && node --check public/home.js && node --check public/room.js && node --check public/new-thread.js && node --check public/thread.js && node --check public/moderation.js"
+  },
+  "keywords": [
+    "bulletin-board",
+    "discussion",
+    "politics",
+    "economy",
+    "moderation"
+  ],
+  "author": "",
+  "license": "ISC",
+  "description": "Discussion-first political economy bulletin board",
+  "dependencies": {
+    "express": "^5.2.1"
+  }
+}

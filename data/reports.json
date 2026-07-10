@@ -1,0 +1,15 @@
+[
+  {
+    "id": "report-seed-1",
+    "targetType": "comment",
+    "threadId": "security-001",
+    "targetId": "c-sec-1",
+    "reason": "その他",
+    "details": "線引きの参考として保留中のダミー通報。",
+    "reporter": "seed",
+    "status": "pending",
+    "createdAt": "2026-04-09T12:50:12.546Z",
+    "resolvedAt": null,
+    "resolutionNote": ""
+  }
+]

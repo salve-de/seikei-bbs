@@ -1,0 +1,135 @@
+[
+  {
+    "id": "money-mega",
+    "room": "money",
+    "author": "運営",
+    "title": "政治資金規正法 再改正を追うメガスレ",
+    "summary": "献金、パーティー券、監査のどこを塞がないと意味がないのかを継続追跡する総合スレ。",
+    "body": "不祥事そのものの怒りだけでなく、支部経由、監査、公開基準、第三者機関まで分けて議論する。単発ニュースはここへ集約し、重複スレは整理する。",
+    "sourceUrl": "",
+    "tags": [
+      "政治資金",
+      "献金",
+      "監査"
+    ],
+    "createdAt": "2026-04-08T21:14:12.546Z",
+    "updatedAt": "2026-04-09T13:44:12.546Z",
+    "lastCommentAt": "2026-04-09T13:44:12.546Z",
+    "megathread": true,
+    "pinned": true,
+    "locked": false,
+    "slowModeSeconds": 60,
+    "moderationNote": "継続炎上テーマのため slow mode 60 秒。"
+  },
+  {
+    "id": "tax-001",
+    "room": "tax",
+    "author": "mod_tax",
+    "title": "消費税減税をやるなら何を削るべきか",
+    "summary": "減税賛成/反対ではなく、財源と対象期間と受益層の線引きを先に決めるための議論。",
+    "body": "恒久減税、時限減税、給付、社会保険料軽減のどれが実際に家計へ効くのか。誰が得して誰が漏れるのかを、感情ではなく設計で話す。",
+    "sourceUrl": "",
+    "tags": [
+      "減税",
+      "消費税",
+      "財源"
+    ],
+    "createdAt": "2026-04-09T06:14:12.546Z",
+    "updatedAt": "2026-04-09T14:50:12.546Z",
+    "lastCommentAt": "2026-04-09T14:50:12.546Z",
+    "megathread": false,
+    "pinned": false,
+    "locked": false,
+    "slowModeSeconds": 0,
+    "moderationNote": "未設定"
+  },
+  {
+    "id": "prices-001",
+    "room": "prices",
+    "author": "名無しさん",
+    "title": "物価高なのに賃上げ実感が弱い理由を分解する",
+    "summary": "名目賃金のニュースと生活実感が噛み合わない理由を、固定費、食料、雇用形態で分ける。",
+    "body": "統計の平均だけでなく、中小企業、非正規、住居費の違いまで見ないと生活感覚は拾えない。家計簿ベースの実感を書いてもいいが、どの費目が効いているかは明記する。",
+    "sourceUrl": "",
+    "tags": [
+      "物価高",
+      "実質賃金",
+      "家計"
+    ],
+    "createdAt": "2026-04-09T09:14:12.546Z",
+    "updatedAt": "2026-04-09T13:02:12.546Z",
+    "lastCommentAt": "2026-04-09T13:02:12.546Z",
+    "megathread": false,
+    "pinned": false,
+    "locked": false,
+    "slowModeSeconds": 0,
+    "moderationNote": "未設定"
+  },
+  {
+    "id": "boj-mega",
+    "room": "boj",
+    "author": "運営",
+    "title": "円安・日銀・株価の因果を追うメガスレ",
+    "summary": "円安、利上げ観測、輸入物価、株価の動きを1本で追う定点スレ。単発相場実況はここへ寄せる。",
+    "body": "為替だけ、株だけ、日銀だけに切らず、家計、企業、投資家の3方向で議論する。短時間の連投で相場実況化しやすいので slow mode を入れる。",
+    "sourceUrl": "",
+    "tags": [
+      "円安",
+      "日銀",
+      "株価",
+      "金利"
+    ],
+    "createdAt": "2026-04-09T03:14:12.546Z",
+    "updatedAt": "2026-04-09T15:02:12.546Z",
+    "lastCommentAt": "2026-04-09T15:02:12.546Z",
+    "megathread": true,
+    "pinned": true,
+    "locked": false,
+    "slowModeSeconds": 45,
+    "moderationNote": "実況化しやすいので slow mode 45 秒。"
+  },
+  {
+    "id": "security-001",
+    "room": "security",
+    "author": "analysis_user",
+    "title": "防衛費増額は家計負担と両立するのか",
+    "summary": "安全保障の必要性は前提にした上で、税、国債、歳出削減のどこで賄うのかを議論する。",
+    "body": "外交・安全保障は陣営論に流れやすい。だから費用負担、時間軸、エネルギー価格への波及までセットで話す。人格攻撃や国籍ヘイトは即通報対象。",
+    "sourceUrl": "",
+    "tags": [
+      "防衛費",
+      "安全保障",
+      "税負担"
+    ],
+    "createdAt": "2026-04-09T07:14:12.546Z",
+    "updatedAt": "2026-04-09T12:02:12.546Z",
+    "lastCommentAt": "2026-04-09T12:02:12.546Z",
+    "megathread": false,
+    "pinned": false,
+    "locked": false,
+    "slowModeSeconds": 30,
+    "moderationNote": "過熱しやすいので slow mode 30 秒。"
+  },
+  {
+    "id": "election-001",
+    "room": "election",
+    "author": "watcher",
+    "title": "次の参院選で本当に効く争点は何か",
+    "summary": "支持率だけでなく、物価、政治資金、候補者の地盤、無党派の動きで争点を整理する。",
+    "body": "政党支持の表明だけではなく、どの争点がどの選挙区で効くのかを書いていく。候補者個人の情報は公知の範囲に限定し、私人情報は不可。",
+    "sourceUrl": "",
+    "tags": [
+      "選挙",
+      "支持率",
+      "無党派"
+    ],
+    "createdAt": "2026-04-09T05:14:12.546Z",
+    "updatedAt": "2026-04-09T10:08:12.546Z",
+    "lastCommentAt": "2026-04-09T10:08:12.546Z",
+    "megathread": false,
+    "pinned": false,
+    "locked": false,
+    "slowModeSeconds": 0,
+    "moderationNote": "未設定"
+  }
+]

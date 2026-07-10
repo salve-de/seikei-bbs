@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>政経フォーラム</title>
+    <meta name="description" content="政治と経済の掲示板" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="site-header">
+        <div class="site-header-main">
+          <a class="brand" href="/">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span class="brand-copy">
+              <span class="brand-kicker">Political Economy Forum</span>
+              <strong>政経フォーラム</strong>
+            </span>
+          </a>
+
+          <nav class="primary-nav" aria-label="主要ページ">
+            <a class="nav-link is-active" href="/">ホーム</a>
+            <a class="nav-link" href="/new">新規スレ</a>
+            <a class="nav-link" href="/moderation">モデレーション</a>
+          </nav>
+        </div>
+
+        <div id="roomTabs" class="room-strip" aria-label="部屋一覧"></div>
+      </header>
+
+      <main class="page">
+        <section class="panel">
+          <div class="section-head">
+            <h1>板一覧</h1>
+            <a class="button button-primary" href="/new">新規スレ</a>
+          </div>
+          <div class="meta-strip">
+            <span>スレ <strong id="homeThreadCount">0</strong></span>
+            <span>レス <strong id="homeCommentCount">0</strong></span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>部屋</h2>
+          </div>
+          <div id="roomDirectory" class="flat-table"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>勢い</h2>
+          </div>
+          <div id="featuredHotThreads"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/shared.js"></script>
+    <script src="/home.js"></script>
+  </body>
+</html>

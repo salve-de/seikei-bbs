@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>新規スレ | 政経フォーラム</title>
+    <meta name="description" content="新規スレッド作成" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="site-header">
+        <div class="site-header-main">
+          <a class="brand" href="/">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span class="brand-copy">
+              <span class="brand-kicker">Political Economy Forum</span>
+              <strong>政経フォーラム</strong>
+            </span>
+          </a>
+
+          <nav class="primary-nav" aria-label="主要ページ">
+            <a class="nav-link" href="/">ホーム</a>
+            <a class="nav-link is-active" href="/new">新規スレ</a>
+            <a class="nav-link" href="/moderation">モデレーション</a>
+          </nav>
+        </div>
+
+        <div id="roomTabs" class="room-strip" aria-label="部屋一覧"></div>
+      </header>
+
+      <main class="page">
+        <section class="panel">
+          <div class="section-head">
+            <h1>新規スレ</h1>
+          </div>
+
+          <form id="composerForm" class="form-stack">
+            <div class="form-grid">
+              <label class="field">
+                <span>部屋</span>
+                <select id="composerRoom"></select>
+              </label>
+
+              <label class="field">
+                <span>名前</span>
+                <input id="composerAuthor" type="text" maxlength="32" placeholder="名無しさん" />
+              </label>
+
+              <label class="field field-full">
+                <span>スレタイ</span>
+                <input id="composerTitle" type="text" maxlength="120" />
+              </label>
+
+              <label class="field field-full">
+                <span>冒頭</span>
+                <textarea id="composerSummary" rows="3" maxlength="240"></textarea>
+              </label>
+
+              <label class="field field-full">
+                <span>本文</span>
+                <textarea id="composerBody" rows="8" maxlength="4000"></textarea>
+              </label>
+
+              <label class="field">
+                <span>タグ</span>
+                <input id="composerTags" type="text" />
+              </label>
+
+              <label class="field">
+                <span>URL</span>
+                <input id="composerSourceUrl" type="url" />
+              </label>
+
+              <label class="checkbox-line field-full">
+                <input id="composerMegathread" type="checkbox" />
+                <span>メガスレ</span>
+              </label>
+            </div>
+
+            <p id="composerFeedback" class="form-feedback" hidden></p>
+
+            <div class="form-actions">
+              <a class="button button-muted" href="/">戻る</a>
+              <button class="button button-primary" type="submit">作成</button>
+            </div>
+          </form>
+        </section>
+
+        <section id="duplicateSection" class="panel" hidden>
+          <div class="section-head">
+            <h2>重複候補</h2>
+          </div>
+          <div id="duplicateList" class="flat-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/shared.js"></script>
+    <script src="/new-thread.js"></script>
+  </body>
+</html>

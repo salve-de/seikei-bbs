@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>部屋 | 政経フォーラム</title>
+    <meta name="description" content="部屋別スレ一覧" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="site-header">
+        <div class="site-header-main">
+          <a class="brand" href="/">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span class="brand-copy">
+              <span class="brand-kicker">Political Economy Forum</span>
+              <strong>政経フォーラム</strong>
+            </span>
+          </a>
+
+          <nav class="primary-nav" aria-label="主要ページ">
+            <a class="nav-link" href="/">ホーム</a>
+            <a class="nav-link" href="/new">新規スレ</a>
+            <a class="nav-link" href="/moderation">モデレーション</a>
+          </nav>
+        </div>
+
+        <div id="roomTabs" class="room-strip" aria-label="部屋一覧"></div>
+      </header>
+
+      <main class="page">
+        <section class="panel">
+          <div class="section-head">
+            <h1 id="roomTitle">部屋</h1>
+            <a id="roomNewThreadLink" class="button button-primary" href="/new">新規スレ</a>
+          </div>
+          <div id="roomMeta" class="meta-strip"></div>
+          <div class="toolbar toolbar-row">
+            <label class="field search-field">
+              <span class="sr-only">部屋内検索</span>
+              <input
+                id="roomSearchInput"
+                type="search"
+                autocomplete="off"
+                placeholder="検索"
+              />
+            </label>
+
+            <select id="roomSortSelect" class="toolbar-select" aria-label="並び替え">
+              <option value="heat">勢い</option>
+              <option value="freshness">新着</option>
+              <option value="commentCount">レス</option>
+            </select>
+
+            <button id="roomMegathreadToggle" class="button button-muted" type="button" aria-pressed="false">
+              メガ
+            </button>
+          </div>
+          <div id="roomTags" class="tag-filter-row"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>スレ</h2>
+            <span id="roomResultSummary" class="count-label"></span>
+          </div>
+          <div id="roomThreadList"></div>
+        </section>
+      </main>
+    </div>
+
+    <script src="/shared.js"></script>
+    <script src="/room.js"></script>
+  </body>
+</html>
