@@ -7,7 +7,7 @@
     "start": "node server.js",
     "build": "vite build",
     "preview:sites": "vite preview",
-    "check": "node --check server.js && node --check public/shared.js && node --check public/home.js && node --check public/room.js && node --check public/new-thread.js && node --check public/thread.js && node --check public/moderation.js && node --check public/politicians.js && node --check public/politician.js && node --check test/api.test.js",
+    "check": "node --check server.js && node --check worker/index.js && node --check vite.config.mjs && node --check public/shared.js && node --check public/home.js && node --check public/room.js && node --check public/new-thread.js && node --check public/thread.js && node --check public/moderation.js && node --check public/politicians.js && node --check public/politician.js && node --check test/api.test.js",
     "test": "node --test test/*.test.js"
   },
   "keywords": [

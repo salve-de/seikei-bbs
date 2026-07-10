@@ -146,6 +146,7 @@ async function api(request, env, pathname) {
 }
 
 function assetPath(pathname) {
+  if (pathname === "/favicon.ico") return "/assets/diet-chamber.jpg";
   if (pathname === "/") return "/index.html";
   if (pathname === "/new") return "/new.html";
   if (pathname === "/politicians") return "/politicians.html";
