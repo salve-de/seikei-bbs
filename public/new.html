@@ -22,8 +22,7 @@
           <nav class="primary-nav" aria-label="主要ページ">
             <a class="nav-link" href="/">今日の争点</a>
             <a class="nav-link" href="/politicians">議員</a>
-            <a class="nav-link is-active" href="/new">新規スレ</a>
-            <a class="nav-link" href="/moderation">モデレーション</a>
+            <a class="nav-link is-active" href="/new">論点を立てる</a>
           </nav>
         </div>
 
@@ -33,7 +32,7 @@
       <main class="page">
         <section class="panel">
           <div class="section-head">
-            <h1>新規スレ</h1>
+            <h1>話したい論点を立てる</h1>
           </div>
 
           <form id="composerForm" class="form-stack">
@@ -74,6 +73,16 @@
               </label>
 
               <label class="field field-full">
+                <span>みんなに判断してほしい問い</span>
+                <input id="composerDecisionPrompt" type="text" maxlength="180" required placeholder="例: 消費税減税を時限措置として実施するべきか" />
+              </label>
+
+              <fieldset class="field field-full">
+                <legend>生活のどこに関係する？（1〜3個）</legend>
+                <div id="composerImpacts" class="check-grid"></div>
+              </fieldset>
+
+              <label class="field field-full">
                 <span>本文</span>
                 <textarea id="composerBody" rows="8" maxlength="4000"></textarea>
               </label>
@@ -86,6 +95,16 @@
               <label class="field">
                 <span>一次情報・ニュースのURL</span>
                 <input id="composerSourceUrl" type="url" required />
+              </label>
+
+              <label class="field">
+                <span>出典の種類</span>
+                <select id="composerSourceKind" required>
+                  <option value="official">公的機関・一次資料</option>
+                  <option value="news">報道</option>
+                  <option value="analysis">解説・分析</option>
+                  <option value="other">その他</option>
+                </select>
               </label>
 
               <label class="checkbox-line field-full">

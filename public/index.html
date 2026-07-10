@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>今日の争点 | 政経フォーラム</title>
-    <meta name="description" content="政治と経済のニュースを一次情報から議論する掲示板" />
+    <title>今日、生活に効く争点 | 政経フォーラム</title>
+    <meta name="description" content="政治と経済を、自分の生活への影響から考える議論の場" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
@@ -13,73 +13,64 @@
         <div class="site-header-main">
           <a class="brand" href="/">
             <span class="brand-mark" aria-hidden="true"></span>
-            <span class="brand-copy">
-              <span class="brand-kicker">Political Economy Forum</span>
-              <strong>政経フォーラム</strong>
-            </span>
+            <span class="brand-copy"><span class="brand-kicker">Political Economy Forum</span><strong>政経フォーラム</strong></span>
           </a>
-
           <nav class="primary-nav" aria-label="主要ページ">
             <a class="nav-link is-active" href="/">今日の争点</a>
             <a class="nav-link" href="/politicians">議員</a>
-            <a class="nav-link" href="/new">新規スレ</a>
-            <a class="nav-link" href="/moderation">モデレーション</a>
+            <a class="nav-link" href="/new">論点を立てる</a>
           </nav>
         </div>
-
         <div id="roomTabs" class="room-strip" aria-label="部屋一覧"></div>
       </header>
 
       <main class="page">
-        <section class="pulse-band">
-          <div>
-            <p class="eyebrow">Today's pulse</p>
-            <h1>今日の争点</h1>
-            <p class="pulse-lead">物価、税、政治とカネ。いま動いている論点を追う。</p>
-          </div>
-          <div class="pulse-actions">
-            <div class="pulse-stat"><strong id="homeThreadCount">0</strong><span>スレ</span></div>
-            <div class="pulse-stat"><strong id="homeCommentCount">0</strong><span>レス</span></div>
-            <a class="button button-primary" href="/new">論点を立てる</a>
+        <section class="agenda-hero">
+          <img src="/assets/diet-chamber.jpg" alt="国会議事堂の本会議場" />
+          <div class="agenda-hero-shade"></div>
+          <div class="agenda-hero-content">
+            <p class="eyebrow">今日、生活に効く争点</p>
+            <h1>政治を「自分ごと」から考える</h1>
+            <p>ニュースの賛否だけで終わらせず、家計・仕事・地域・将来への影響と根拠を並べる。</p>
+            <div id="impactFilter" class="segmented-control" aria-label="生活への影響で絞り込む"></div>
           </div>
         </section>
 
         <section class="unframed-section">
           <div class="section-title-row">
-            <div>
-              <p class="eyebrow">Emotion & evidence</p>
-              <h2>いま感情が動いている</h2>
-            </div>
+            <div><p class="eyebrow">Your life, your judgment</p><h2 id="issueHeading">あなたに関係する論点</h2></div>
+            <a class="button button-primary" href="/new">論点を立てる</a>
           </div>
-          <div id="dailyIssueGrid" class="issue-grid"></div>
+          <div id="dailyIssueGrid" class="issue-grid issue-grid-wide"></div>
+        </section>
+
+        <section id="watchSection" class="watch-band" hidden>
+          <div class="section-title-row"><div><p class="eyebrow">Watching</p><h2>あとで追う論点</h2></div><span id="watchCount" class="count-label"></span></div>
+          <div id="watchedThreads" class="watch-list"></div>
         </section>
 
         <div class="home-columns">
           <section class="panel">
-            <div class="section-head">
-              <h2>勢いのある議論</h2>
-            </div>
-            <div id="featuredHotThreads"></div>
+            <div class="section-head"><h2>根拠が集まっている議論</h2><span class="section-note">出典つき投稿を優先</span></div>
+            <div id="groundedThreads"></div>
           </section>
-
           <section class="panel">
-            <div class="section-head">
-              <h2>議員から探す</h2>
-              <a class="button button-text" href="/politicians">一覧</a>
-            </div>
+            <div class="section-head"><h2>議員から探す</h2></div>
             <div id="featuredPoliticians" class="politician-list"></div>
           </section>
         </div>
 
         <section class="panel">
-          <div class="section-head">
-            <h2>テーマ別の部屋</h2>
-          </div>
-          <div id="roomDirectory" class="flat-table"></div>
+          <div class="section-head"><h2>テーマから入る</h2><span id="homeCounts" class="section-note"></span></div>
+          <div id="roomDirectory"></div>
         </section>
       </main>
-    </div>
 
+      <footer class="site-footer">
+        <span>出典を読み、立場を分け、生活への影響を残す。</span>
+        <a href="https://commons.wikimedia.org/wiki/File:Japanese_diet_inside.jpg" target="_blank" rel="noreferrer">写真: Chris 73 / Wikimedia Commons / CC BY-SA 3.0</a>
+      </footer>
+    </div>
     <script src="/shared.js"></script>
     <script src="/home.js"></script>
   </body>

@@ -28,9 +28,12 @@ const elements = {
   composerTargetLabelField: document.getElementById("composerTargetLabelField"),
   composerTitle: document.getElementById("composerTitle"),
   composerSummary: document.getElementById("composerSummary"),
+  composerDecisionPrompt: document.getElementById("composerDecisionPrompt"),
+  composerImpacts: document.getElementById("composerImpacts"),
   composerBody: document.getElementById("composerBody"),
   composerTags: document.getElementById("composerTags"),
   composerSourceUrl: document.getElementById("composerSourceUrl"),
+  composerSourceKind: document.getElementById("composerSourceKind"),
   composerMegathread: document.getElementById("composerMegathread"),
   composerFeedback: document.getElementById("composerFeedback"),
   duplicateSection: document.getElementById("duplicateSection"),
@@ -71,6 +74,12 @@ function populateTargets() {
     elements.composerTargetId.value = requestedTargetId;
   }
   updateTargetFields();
+}
+
+function populateImpacts() {
+  elements.composerImpacts.innerHTML = state.board.impactDefinitions
+    .map((impact) => `<label><input type="checkbox" value="${impact.id}" /><span>${escapeHtml(impact.label)}</span></label>`)
+    .join("");
 }
 
 function updateTargetFields() {
@@ -141,9 +150,12 @@ async function submitThread(event) {
         author: elements.composerAuthor.value,
         title: elements.composerTitle.value,
         summary: elements.composerSummary.value,
+        decisionPrompt: elements.composerDecisionPrompt.value,
+        impactAreas: [...elements.composerImpacts.querySelectorAll("input:checked")].map((input) => input.value),
         body: elements.composerBody.value,
         tags: elements.composerTags.value,
         sourceUrl: elements.composerSourceUrl.value,
+        sourceKind: elements.composerSourceKind.value,
         targetType: elements.composerTargetType.value,
         targetId: elements.composerTargetId.value,
         targetLabel: elements.composerTargetLabel.value,
@@ -172,6 +184,7 @@ async function initialize() {
   state.board = await requestJson("/api/board");
   populateRooms();
   populateTargets();
+  populateImpacts();
   renderRoomTabs(elements.roomTabs, state.board.rooms, currentRoomId());
   renderDuplicates();
   bindEvents();

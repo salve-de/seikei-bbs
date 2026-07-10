@@ -4,13 +4,37 @@
       "id": "c-money-1",
       "author": "名無しさん",
       "body": "公開基準を厳しくしても支部経由の抜け道が残るなら意味が薄い。監査の独立性まで必要。",
-      "createdAt": "2026-04-09T13:44:12.546Z"
+      "createdAt": "2026-04-09T13:44:12.546Z",
+      "stance": "oppose",
+      "claimType": "opinion",
+      "impactAreas": [
+        "rights",
+        "future"
+      ],
+      "sourceUrl": "",
+      "helpfulness": {
+        "useful": 6,
+        "changed": 2,
+        "weak": 0
+      }
     },
     {
       "id": "c-money-2",
       "author": "調査班",
       "body": "企業献金そのものより、公開頻度と監査体制をどう変えるかが本体だと思う。",
-      "createdAt": "2026-04-09T11:14:12.546Z"
+      "createdAt": "2026-04-09T11:14:12.546Z",
+      "stance": "support",
+      "claimType": "fact",
+      "impactAreas": [
+        "rights",
+        "future"
+      ],
+      "sourceUrl": "https://elaws.e-gov.go.jp/document?lawid=323AC1000000194",
+      "helpfulness": {
+        "useful": 8,
+        "changed": 3,
+        "weak": 0
+      }
     }
   ],
   "tax-001": [
@@ -18,19 +42,55 @@
       "id": "c-tax-1",
       "author": "名無しさん",
       "body": "時限減税ならまだ議論できるが、恒久減税なら社会保険をどうするかまで避けられない。",
-      "createdAt": "2026-04-09T14:50:12.546Z"
+      "createdAt": "2026-04-09T14:50:12.546Z",
+      "stance": "oppose",
+      "claimType": "opinion",
+      "impactAreas": [
+        "household",
+        "future"
+      ],
+      "sourceUrl": "",
+      "helpfulness": {
+        "useful": 9,
+        "changed": 4,
+        "weak": 0
+      }
     },
     {
       "id": "c-tax-2",
       "author": "生活者",
       "body": "給付は届くのが遅い。減税の方が早いけど、低所得層への届き方が弱いのが難点。",
-      "createdAt": "2026-04-09T14:08:12.546Z"
+      "createdAt": "2026-04-09T14:08:12.546Z",
+      "stance": "support",
+      "claimType": "experience",
+      "impactAreas": [
+        "household",
+        "future"
+      ],
+      "sourceUrl": "",
+      "helpfulness": {
+        "useful": 7,
+        "changed": 2,
+        "weak": 0
+      }
     },
     {
       "id": "c-tax-3",
       "author": "財源厨",
       "body": "何を削るかを言わずに減税だけ叫ぶ話はこのスレでは切り分けたい。",
-      "createdAt": "2026-04-09T12:44:12.546Z"
+      "createdAt": "2026-04-09T12:44:12.546Z",
+      "stance": "oppose",
+      "claimType": "opinion",
+      "impactAreas": [
+        "household",
+        "future"
+      ],
+      "sourceUrl": "",
+      "helpfulness": {
+        "useful": 3,
+        "changed": 0,
+        "weak": 0
+      }
     }
   ],
   "prices-001": [
@@ -38,7 +98,19 @@
       "id": "c-prices-1",
       "author": "家計簿勢",
       "body": "食料だけじゃなくて家賃更新と保険料が重い。名目賃金のニュースとズレるのはそこ。",
-      "createdAt": "2026-04-09T13:02:12.546Z"
+      "createdAt": "2026-04-09T13:02:12.546Z",
+      "stance": "unsure",
+      "claimType": "experience",
+      "impactAreas": [
+        "household",
+        "work"
+      ],
+      "sourceUrl": "",
+      "helpfulness": {
+        "useful": 12,
+        "changed": 5,
+        "weak": 0
+      }
     }
   ],
   "boj-mega": [
@@ -46,13 +118,37 @@
       "id": "c-boj-1",
       "author": "相場民",
       "body": "円安が家計に効く速度と株価に効く速度が違うから、感情だけで利上げ賛否を決めにくい。",
-      "createdAt": "2026-04-09T15:02:12.546Z"
+      "createdAt": "2026-04-09T15:02:12.546Z",
+      "stance": "unsure",
+      "claimType": "opinion",
+      "impactAreas": [
+        "household",
+        "work"
+      ],
+      "sourceUrl": "",
+      "helpfulness": {
+        "useful": 10,
+        "changed": 6,
+        "weak": 0
+      }
     },
     {
       "id": "c-boj-2",
       "author": "名無しさん",
       "body": "輸入物価だけじゃなく住宅ローン側も見るべき。ここは実況より整理を優先したい。",
-      "createdAt": "2026-04-09T14:26:12.546Z"
+      "createdAt": "2026-04-09T14:26:12.546Z",
+      "stance": "oppose",
+      "claimType": "opinion",
+      "impactAreas": [
+        "household",
+        "work"
+      ],
+      "sourceUrl": "",
+      "helpfulness": {
+        "useful": 6,
+        "changed": 3,
+        "weak": 0
+      }
     }
   ],
   "security-001": [
@@ -60,7 +156,19 @@
       "id": "c-sec-1",
       "author": "名無しさん",
       "body": "防衛費の必要性を認めても、どの税で払うのかが曖昧なままだと支持は続かない。",
-      "createdAt": "2026-04-09T12:02:12.546Z"
+      "createdAt": "2026-04-09T12:02:12.546Z",
+      "stance": "unsure",
+      "claimType": "opinion",
+      "impactAreas": [
+        "security",
+        "future"
+      ],
+      "sourceUrl": "",
+      "helpfulness": {
+        "useful": 0,
+        "changed": 0,
+        "weak": 0
+      }
     }
   ],
   "election-001": [
@@ -68,7 +176,19 @@
       "id": "c-ele-1",
       "author": "watcher",
       "body": "都市部は物価、地方は社会保険と候補者地盤の話が強い印象。全部同じ争点ではない。",
-      "createdAt": "2026-04-09T10:08:12.546Z"
+      "createdAt": "2026-04-09T10:08:12.546Z",
+      "stance": "unsure",
+      "claimType": "opinion",
+      "impactAreas": [
+        "rights",
+        "region"
+      ],
+      "sourceUrl": "",
+      "helpfulness": {
+        "useful": 0,
+        "changed": 0,
+        "weak": 0
+      }
     }
   ],
   "takaichi-policy-001": [
@@ -76,7 +196,19 @@
       "id": "c-takaichi-1",
       "author": "家計目線",
       "body": "成長投資の話と、短期の物価負担を軽くする話は分けて評価したい。",
-      "createdAt": "2026-07-10T08:44:54.167Z"
+      "createdAt": "2026-07-10T08:44:54.167Z",
+      "stance": "unsure",
+      "claimType": "opinion",
+      "impactAreas": [
+        "rights",
+        "region"
+      ],
+      "sourceUrl": "",
+      "helpfulness": {
+        "useful": 0,
+        "changed": 0,
+        "weak": 0
+      }
     }
   ],
   "tamaki-session-001": [
@@ -84,7 +216,19 @@
       "id": "c-tamaki-1",
       "author": "制度確認中",
       "body": "負担軽減の対象範囲と恒久財源が同時に示されているかを会議録で追いたい。",
-      "createdAt": "2026-07-10T07:56:54.167Z"
+      "createdAt": "2026-07-10T07:56:54.167Z",
+      "stance": "unsure",
+      "claimType": "opinion",
+      "impactAreas": [
+        "household",
+        "future"
+      ],
+      "sourceUrl": "",
+      "helpfulness": {
+        "useful": 0,
+        "changed": 0,
+        "weak": 0
+      }
     }
   ]
 }

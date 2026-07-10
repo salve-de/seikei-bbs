@@ -31,12 +31,38 @@ const targetDefinitions = [
 ];
 
 const reactionDefinitions = [
-  { id: "agree", label: "同意", tone: "support" },
-  { id: "oppose", label: "反対", tone: "oppose" },
-  { id: "source", label: "ソース欲しい", tone: "source" },
-  { id: "important", label: "重要", tone: "important" },
-  { id: "impact", label: "生活に直撃", tone: "impact" },
+  { id: "concern", label: "不安", tone: "concern" },
   { id: "angry", label: "怒り", tone: "angry" },
+  { id: "hope", label: "期待", tone: "hope" },
+  { id: "curious", label: "疑問", tone: "curious" },
+];
+
+const positionDefinitions = [
+  { id: "support", label: "賛成寄り" },
+  { id: "oppose", label: "反対寄り" },
+  { id: "unsure", label: "判断保留" },
+];
+
+const impactDefinitions = [
+  { id: "household", label: "家計" },
+  { id: "work", label: "仕事" },
+  { id: "region", label: "地域" },
+  { id: "future", label: "将来" },
+  { id: "rights", label: "権利・制度" },
+  { id: "security", label: "安全" },
+];
+
+const claimDefinitions = [
+  { id: "experience", label: "自分の体験" },
+  { id: "opinion", label: "意見・予想" },
+  { id: "fact", label: "事実・データ" },
+  { id: "question", label: "質問" },
+];
+
+const helpfulnessDefinitions = [
+  { id: "useful", label: "参考になった" },
+  { id: "changed", label: "見方が変わった" },
+  { id: "weak", label: "根拠が弱い" },
 ];
 
 const roomDefinitions = [
@@ -183,6 +209,10 @@ app.get("/api/threads/:threadId", (request, response) => {
     comments: decorateComments(thread.id),
     relatedThreads: relatedThreadsForThread(thread),
     reactionDefinitions,
+    positionDefinitions,
+    impactDefinitions,
+    claimDefinitions,
+    helpfulnessDefinitions,
   });
 });
 
@@ -200,6 +230,9 @@ app.post("/api/threads", async (request, response) => {
   const body = normalizeText(request.body?.body);
   const sourceUrl = normalizeUrl(request.body?.sourceUrl);
   const tags = normalizeTags(request.body?.tags);
+  const decisionPrompt = normalizeText(request.body?.decisionPrompt);
+  const impactAreas = normalizeImpactAreas(request.body?.impactAreas);
+  const sourceKind = normalizeText(request.body?.sourceKind);
   const megathread = Boolean(request.body?.megathread);
   const target = normalizeThreadTarget(request.body);
 
@@ -238,6 +271,21 @@ app.post("/api/threads", async (request, response) => {
     return;
   }
 
+  if (decisionPrompt.length < 10 || decisionPrompt.length > 180) {
+    response.status(400).json({ error: "invalid_decision_prompt" });
+    return;
+  }
+
+  if (impactAreas.length === 0 || impactAreas.length > 3) {
+    response.status(400).json({ error: "invalid_impact_areas" });
+    return;
+  }
+
+  if (!["official", "news", "analysis", "other"].includes(sourceKind)) {
+    response.status(400).json({ error: "invalid_source_kind" });
+    return;
+  }
+
   const threadFingerprint = actionFingerprint(request, author, `thread:${room}`);
   const blockedUntil = nextAllowedAt(threadFingerprint, THREAD_COOLDOWN_MS);
 
@@ -258,9 +306,13 @@ app.post("/api/threads", async (request, response) => {
     summary,
     body,
     sourceUrl,
+    sourceKind,
+    decisionPrompt,
+    impactAreas,
     tags,
     ...target,
     reactions: emptyReactionCounts(),
+    positions: emptyPositionCounts(),
     createdAt: now,
     updatedAt: now,
     lastCommentAt: null,
@@ -284,6 +336,35 @@ app.post("/api/threads", async (request, response) => {
     thread: decorateThread(thread),
     board: buildBoardPayload(),
   });
+});
+
+app.post("/api/threads/:threadId/positions", async (request, response) => {
+  const thread = boardState.threads.find((item) => item.id === request.params.threadId);
+  if (!thread) {
+    response.status(404).json({ error: "thread_not_found" });
+    return;
+  }
+
+  const position = normalizeText(request.body?.position);
+  if (!positionDefinitions.some((item) => item.id === position)) {
+    response.status(400).json({ error: "invalid_position" });
+    return;
+  }
+
+  const fingerprint = actionFingerprint(request, "anonymous", `position:${thread.id}`);
+  const blockedUntil = nextAllowedAt(fingerprint, REACTION_COOLDOWN_MS);
+  if (blockedUntil) {
+    response.status(429).json({ error: "position_cooldown", nextAllowedAt: blockedUntil });
+    return;
+  }
+
+  const counts = normalizePositionCounts(thread.positions);
+  counts[position] += 1;
+  thread.positions = counts;
+  boardState.rateLimits.set(fingerprint, Date.now());
+  await persistBoard();
+
+  response.status(201).json({ ok: true, thread: decorateThread(thread) });
 });
 
 app.post("/api/threads/:threadId/reactions", async (request, response) => {
@@ -343,9 +424,33 @@ app.post("/api/threads/:threadId/comments", async (request, response) => {
 
   const author = normalizeText(request.body?.author || "名無しさん").slice(0, 32) || "名無しさん";
   const body = normalizeText(request.body?.body);
+  const stance = normalizeText(request.body?.stance);
+  const claimType = normalizeText(request.body?.claimType);
+  const impactAreas = normalizeImpactAreas(request.body?.impactAreas);
+  const sourceUrl = normalizeUrl(request.body?.sourceUrl);
 
   if (body.length < 2 || body.length > 1000) {
     response.status(400).json({ error: "invalid_comment_body" });
+    return;
+  }
+
+  if (!positionDefinitions.some((item) => item.id === stance)) {
+    response.status(400).json({ error: "invalid_comment_stance" });
+    return;
+  }
+
+  if (!claimDefinitions.some((item) => item.id === claimType)) {
+    response.status(400).json({ error: "invalid_claim_type" });
+    return;
+  }
+
+  if (impactAreas.length === 0 || impactAreas.length > 3) {
+    response.status(400).json({ error: "invalid_impact_areas" });
+    return;
+  }
+
+  if (claimType === "fact" && !sourceUrl) {
+    response.status(400).json({ error: "fact_requires_source" });
     return;
   }
 
@@ -368,6 +473,11 @@ app.post("/api/threads/:threadId/comments", async (request, response) => {
     id: makeId(`comment:${thread.id}:${author}:${Date.now()}:${body}`),
     author,
     body,
+    stance,
+    claimType,
+    impactAreas,
+    sourceUrl,
+    helpfulness: emptyHelpfulnessCounts(),
     createdAt: new Date().toISOString(),
   };
 
@@ -386,6 +496,40 @@ app.post("/api/threads/:threadId/comments", async (request, response) => {
     thread: decorateThread(thread),
     comments: decorateComments(thread.id),
   });
+});
+
+app.post("/api/threads/:threadId/comments/:commentId/helpfulness", async (request, response) => {
+  const comments = boardState.comments[request.params.threadId] || [];
+  const comment = comments.find((item) => item.id === request.params.commentId);
+  if (!comment) {
+    response.status(404).json({ error: "comment_not_found" });
+    return;
+  }
+
+  const signal = normalizeText(request.body?.signal);
+  if (!helpfulnessDefinitions.some((item) => item.id === signal)) {
+    response.status(400).json({ error: "invalid_helpfulness" });
+    return;
+  }
+
+  const fingerprint = actionFingerprint(
+    request,
+    "anonymous",
+    `helpfulness:${comment.id}:${signal}`
+  );
+  const blockedUntil = nextAllowedAt(fingerprint, REACTION_COOLDOWN_MS);
+  if (blockedUntil) {
+    response.status(429).json({ error: "helpfulness_cooldown", nextAllowedAt: blockedUntil });
+    return;
+  }
+
+  const counts = normalizeHelpfulnessCounts(comment.helpfulness);
+  counts[signal] += 1;
+  comment.helpfulness = counts;
+  boardState.rateLimits.set(fingerprint, Date.now());
+  await persistBoard();
+
+  response.status(201).json({ ok: true, comments: decorateComments(request.params.threadId) });
 });
 
 app.post("/api/reports", async (request, response) => {
@@ -593,6 +737,9 @@ function buildBoardPayload() {
     politicians: politicianDefinitions.map((politician) => decoratePolitician(politician)),
     targetDefinitions,
     reactionDefinitions,
+    positionDefinitions,
+    impactDefinitions,
+    claimDefinitions,
     moderation: buildModerationSummary(),
     meta: {
       lastSavedAt: boardState.lastSavedAt,
@@ -624,8 +771,16 @@ function buildHomePayload() {
       };
     }),
     featured: {
-      dailyIssues: threads.slice(0, 4),
+      dailyIssues: [...threads]
+        .sort((left, right) => right.value - left.value || right.heat - left.heat)
+        .slice(0, 6),
       hotThreads: threads.slice(0, 8),
+      groundedThreads: [...threads]
+        .sort((left, right) => right.evidenceRate - left.evidenceRate || right.value - left.value)
+        .slice(0, 6),
+      bridgingThreads: [...threads]
+        .sort((left, right) => right.bridgeSignals - left.bridgeSignals || right.value - left.value)
+        .slice(0, 6),
       newestThreads: [...threads]
         .sort(
           (left, right) =>
@@ -705,18 +860,37 @@ function decorateThread(thread) {
     count: reactionCounts[definition.id],
   }));
   const reactionTotal = reactions.reduce((sum, item) => sum + item.count, 0);
+  const positionCounts = normalizePositionCounts(thread.positions);
+  const positions = positionDefinitions.map((definition) => ({
+    ...definition,
+    count: positionCounts[definition.id],
+  }));
+  const normalizedComments = comments.map((comment) => normalizeComment(comment, thread));
+  const evidenceCount = 1 + normalizedComments.filter((comment) => comment.sourceUrl).length;
+  const evidenceRate = Math.round((evidenceCount / (normalizedComments.length + 1)) * 100);
+  const bridgeSignals = normalizedComments.reduce(
+    (sum, comment) => sum + normalizeHelpfulnessCounts(comment.helpfulness).changed,
+    0
+  );
 
   return {
     ...thread,
     target: resolveThreadTarget(thread),
     reactions,
     reactionTotal,
+    positions,
+    positionTotal: positions.reduce((sum, item) => sum + item.count, 0),
+    impactAreas: normalizeImpactAreas(thread.impactAreas).length
+      ? normalizeImpactAreas(thread.impactAreas)
+      : defaultImpactsForRoom(thread.room),
+    evidenceRate,
+    bridgeSignals,
     commentCount: comments.length,
     lastActivityAt,
     pendingReportsCount,
-    heat: computeHeat(thread, comments.length, lastActivityAt, pendingReportsCount, reactionTotal),
+    heat: computeHeat(thread, comments.length, lastActivityAt, reactionTotal),
     freshness: computeFreshness(lastActivityAt),
-    value: computeValue(thread, comments.length),
+    value: computeValue(thread, normalizedComments),
   };
 }
 
@@ -741,12 +915,20 @@ function decoratePolitician(politician) {
 }
 
 function decorateComments(threadId) {
-  return (boardState.comments[threadId] || []).map((comment) => ({
+  const thread = boardState.threads.find((item) => item.id === threadId);
+  return (boardState.comments[threadId] || []).map((rawComment) => {
+    const comment = normalizeComment(rawComment, thread);
+    return {
     ...comment,
+    helpfulness: helpfulnessDefinitions.map((definition) => ({
+      ...definition,
+      count: normalizeHelpfulnessCounts(comment.helpfulness)[definition.id],
+    })),
     pendingReportsCount: boardState.reports.filter(
       (item) => item.status === "pending" && item.targetType === "comment" && item.targetId === comment.id
     ).length,
-  }));
+  };
+  });
 }
 
 function pendingReports() {
@@ -791,15 +973,14 @@ function topTagsForThreads(threads, limit = 12) {
     .map(([tag, count]) => ({ tag, count }));
 }
 
-function computeHeat(thread, commentCount, lastActivityAt, pendingReportsCount, reactionTotal = 0) {
+function computeHeat(thread, commentCount, lastActivityAt, reactionTotal = 0) {
   const ageHours = Math.max(0, (Date.now() - new Date(lastActivityAt).getTime()) / 36e5);
   let score = 34;
   score += Math.max(0, 42 - ageHours * 5);
   score += commentCount * 7;
-  score += Math.min(reactionTotal * 2, 18);
+  score += Math.min(reactionTotal, 10);
   score += thread.pinned ? 10 : 0;
   score += thread.megathread ? 8 : 0;
-  score += pendingReportsCount * 2;
   return clamp(Math.round(score), 5, 99);
 }
 
@@ -808,10 +989,14 @@ function computeFreshness(timestamp) {
   return clamp(Math.round(100 - ageHours * 8), 8, 100);
 }
 
-function computeValue(thread, commentCount) {
-  let score = 28 + (thread.tags?.length || 0) * 8 + commentCount * 4;
+function computeValue(thread, comments) {
+  let score = 24 + (thread.tags?.length || 0) * 5 + comments.length * 2;
   score += thread.sourceUrl ? 8 : 0;
-  score += thread.megathread ? 16 : 0;
+  score += thread.decisionPrompt ? 10 : 0;
+  score += normalizeImpactAreas(thread.impactAreas).length * 4;
+  score += comments.filter((comment) => comment.sourceUrl).length * 5;
+  const representedStances = new Set(comments.map((comment) => comment.stance)).size;
+  score += representedStances > 1 ? 8 : 0;
   return clamp(Math.round(score), 10, 99);
 }
 
@@ -916,6 +1101,24 @@ function normalizeTags(value) {
   return unique;
 }
 
+function normalizeImpactAreas(value) {
+  const values = Array.isArray(value) ? value : String(value || "").split(",");
+  const allowed = new Set(impactDefinitions.map((item) => item.id));
+  return [...new Set(values.map((item) => normalizeText(item)).filter((item) => allowed.has(item)))];
+}
+
+function defaultImpactsForRoom(roomId) {
+  const defaults = {
+    money: ["rights", "future"],
+    tax: ["household", "future"],
+    prices: ["household", "work"],
+    boj: ["household", "work"],
+    security: ["security", "future"],
+    election: ["rights", "region"],
+  };
+  return defaults[roomId] || ["future"];
+}
+
 function normalizeThreadTarget(value) {
   const targetType = normalizeText(value?.targetType);
   if (!targetDefinitions.some((definition) => definition.id === targetType)) {
@@ -968,6 +1171,51 @@ function emptyReactionCounts() {
   return Object.fromEntries(reactionDefinitions.map((definition) => [definition.id, 0]));
 }
 
+function emptyPositionCounts() {
+  return Object.fromEntries(positionDefinitions.map((definition) => [definition.id, 0]));
+}
+
+function normalizePositionCounts(value) {
+  const counts = emptyPositionCounts();
+  if (!value || Array.isArray(value) || typeof value !== "object") return counts;
+  for (const definition of positionDefinitions) {
+    counts[definition.id] = clamp(Math.floor(Number(value[definition.id]) || 0), 0, 1_000_000);
+  }
+  return counts;
+}
+
+function emptyHelpfulnessCounts() {
+  return Object.fromEntries(helpfulnessDefinitions.map((definition) => [definition.id, 0]));
+}
+
+function normalizeHelpfulnessCounts(value) {
+  const counts = emptyHelpfulnessCounts();
+  if (!value || Array.isArray(value) || typeof value !== "object") return counts;
+  for (const definition of helpfulnessDefinitions) {
+    counts[definition.id] = clamp(Math.floor(Number(value[definition.id]) || 0), 0, 1_000_000);
+  }
+  return counts;
+}
+
+function normalizeComment(comment, thread) {
+  const stance = positionDefinitions.some((item) => item.id === comment.stance)
+    ? comment.stance
+    : "unsure";
+  const claimType = claimDefinitions.some((item) => item.id === comment.claimType)
+    ? comment.claimType
+    : "opinion";
+  return {
+    ...comment,
+    stance,
+    claimType,
+    impactAreas: normalizeImpactAreas(comment.impactAreas).length
+      ? normalizeImpactAreas(comment.impactAreas)
+      : defaultImpactsForRoom(thread?.room),
+    sourceUrl: normalizeUrl(comment.sourceUrl),
+    helpfulness: normalizeHelpfulnessCounts(comment.helpfulness),
+  };
+}
+
 function normalizeReactionCounts(value) {
   const counts = emptyReactionCounts();
 
@@ -978,6 +1226,10 @@ function normalizeReactionCounts(value) {
   for (const definition of reactionDefinitions) {
     counts[definition.id] = clamp(Math.floor(Number(value[definition.id]) || 0), 0, 1_000_000);
   }
+
+  if (!("concern" in value)) counts.concern = clamp(Number(value.impact || 0), 0, 1_000_000);
+  if (!("hope" in value)) counts.hope = clamp(Number(value.agree || 0), 0, 1_000_000);
+  if (!("curious" in value)) counts.curious = clamp(Number(value.source || 0), 0, 1_000_000);
 
   return counts;
 }
@@ -1027,8 +1279,8 @@ async function loadBoard() {
     !Array.isArray(loadedReports) ||
     isLegacyThreadShape(loadedThreads)
   ) {
-    boardState.threads = seeded.threads;
-    boardState.comments = seeded.comments;
+    boardState.threads = seeded.threads.map((thread) => migrateThread(thread, thread));
+    boardState.comments = migrateComments(seeded.comments, boardState.threads);
     boardState.reports = seeded.reports;
     await persistBoard();
     return;
@@ -1045,7 +1297,7 @@ async function loadBoard() {
   );
 
   boardState.threads = [...migratedThreads, ...missingFeatureSeeds];
-  boardState.comments = { ...loadedComments };
+  boardState.comments = migrateComments(loadedComments, boardState.threads);
   for (const thread of missingFeatureSeeds) {
     boardState.comments[thread.id] = seeded.comments[thread.id] || [];
   }
@@ -1061,6 +1313,18 @@ async function loadBoard() {
   }
 }
 
+function migrateComments(commentsByThread, threads) {
+  const threadsById = new Map(threads.map((thread) => [thread.id, thread]));
+  return Object.fromEntries(
+    Object.entries(commentsByThread || {}).map(([threadId, comments]) => [
+      threadId,
+      (Array.isArray(comments) ? comments : []).map((comment) =>
+        normalizeComment(comment, threadsById.get(threadId))
+      ),
+    ])
+  );
+}
+
 function migrateThread(thread, fallback = {}) {
   const targetType = targetDefinitions.some((item) => item.id === thread.targetType)
     ? thread.targetType
@@ -1068,6 +1332,16 @@ function migrateThread(thread, fallback = {}) {
   const targetLabel = normalizeText(
     thread.targetLabel || fallback.targetLabel || thread.tags?.[0] || findRoom(thread.room)?.label
   );
+
+  const legacyPositions = {
+    support: Number(thread.reactions?.agree || fallback.reactions?.agree || 0),
+    oppose: Number(thread.reactions?.oppose || fallback.reactions?.oppose || 0),
+    unsure: Number(thread.reactions?.source || fallback.reactions?.source || 0),
+  };
+  const storedPositions = normalizePositionCounts(thread.positions || fallback.positions);
+  const migratedPositions = Object.values(storedPositions).some((count) => count > 0)
+    ? storedPositions
+    : legacyPositions;
 
   return {
     ...thread,
@@ -1077,6 +1351,18 @@ function migrateThread(thread, fallback = {}) {
       thread.targetId || fallback.targetId || makeId(`${targetType}:${targetLabel.toLowerCase()}`),
     targetLabel,
     reactions: normalizeReactionCounts(thread.reactions || fallback.reactions),
+    positions: normalizePositionCounts(migratedPositions),
+    decisionPrompt:
+      normalizeText(thread.decisionPrompt || fallback.decisionPrompt) ||
+      `${targetLabel}について、生活への影響を踏まえてどう判断するべきか。`,
+    impactAreas: normalizeImpactAreas(thread.impactAreas).length
+      ? normalizeImpactAreas(thread.impactAreas)
+      : normalizeImpactAreas(fallback.impactAreas).length
+        ? normalizeImpactAreas(fallback.impactAreas)
+        : defaultImpactsForRoom(thread.room),
+    sourceKind: ["official", "news", "analysis", "other"].includes(thread.sourceKind)
+      ? thread.sourceKind
+      : "official",
   };
 }
 

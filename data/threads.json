@@ -24,13 +24,22 @@
     "targetId": "political-funds-control-act",
     "targetLabel": "政治資金規正法",
     "reactions": {
-      "agree": 2,
+      "concern": 1,
+      "angry": 5,
+      "hope": 2,
+      "curious": 2
+    },
+    "positions": {
+      "support": 2,
       "oppose": 1,
-      "source": 2,
-      "important": 4,
-      "impact": 1,
-      "angry": 5
-    }
+      "unsure": 2
+    },
+    "decisionPrompt": "政治資金規正法について、生活への影響を踏まえてどう判断するべきか。",
+    "impactAreas": [
+      "rights",
+      "future"
+    ],
+    "sourceKind": "official"
   },
   {
     "id": "tax-001",
@@ -57,13 +66,22 @@
     "targetId": "consumption-tax",
     "targetLabel": "消費税",
     "reactions": {
-      "agree": 3,
+      "concern": 6,
+      "angry": 2,
+      "hope": 3,
+      "curious": 1
+    },
+    "positions": {
+      "support": 3,
       "oppose": 2,
-      "source": 1,
-      "important": 4,
-      "impact": 6,
-      "angry": 2
-    }
+      "unsure": 1
+    },
+    "decisionPrompt": "消費税について、生活への影響を踏まえてどう判断するべきか。",
+    "impactAreas": [
+      "household",
+      "future"
+    ],
+    "sourceKind": "official"
   },
   {
     "id": "prices-001",
@@ -90,13 +108,22 @@
     "targetId": "consumer-prices",
     "targetLabel": "消費者物価",
     "reactions": {
-      "agree": 4,
+      "concern": 7,
+      "angry": 3,
+      "hope": 4,
+      "curious": 1
+    },
+    "positions": {
+      "support": 4,
       "oppose": 0,
-      "source": 1,
-      "important": 3,
-      "impact": 7,
-      "angry": 3
-    }
+      "unsure": 1
+    },
+    "decisionPrompt": "消費者物価について、生活への影響を踏まえてどう判断するべきか。",
+    "impactAreas": [
+      "household",
+      "work"
+    ],
+    "sourceKind": "official"
   },
   {
     "id": "boj-mega",
@@ -124,13 +151,22 @@
     "targetId": "monetary-policy",
     "targetLabel": "金融政策",
     "reactions": {
-      "agree": 2,
+      "concern": 4,
+      "angry": 1,
+      "hope": 2,
+      "curious": 2
+    },
+    "positions": {
+      "support": 2,
       "oppose": 2,
-      "source": 2,
-      "important": 5,
-      "impact": 4,
-      "angry": 1
-    }
+      "unsure": 2
+    },
+    "decisionPrompt": "金融政策について、生活への影響を踏まえてどう判断するべきか。",
+    "impactAreas": [
+      "household",
+      "work"
+    ],
+    "sourceKind": "official"
   },
   {
     "id": "security-001",
@@ -157,13 +193,22 @@
     "targetId": "defense-spending",
     "targetLabel": "防衛費",
     "reactions": {
-      "agree": 2,
+      "concern": 2,
+      "angry": 2,
+      "hope": 2,
+      "curious": 3
+    },
+    "positions": {
+      "support": 2,
       "oppose": 3,
-      "source": 3,
-      "important": 4,
-      "impact": 2,
-      "angry": 2
-    }
+      "unsure": 3
+    },
+    "decisionPrompt": "防衛費について、生活への影響を踏まえてどう判断するべきか。",
+    "impactAreas": [
+      "security",
+      "future"
+    ],
+    "sourceKind": "official"
   },
   {
     "id": "election-001",
@@ -190,13 +235,22 @@
     "targetId": "national-election",
     "targetLabel": "国政選挙",
     "reactions": {
-      "agree": 1,
+      "concern": 2,
+      "angry": 1,
+      "hope": 1,
+      "curious": 2
+    },
+    "positions": {
+      "support": 1,
       "oppose": 1,
-      "source": 2,
-      "important": 5,
-      "impact": 2,
-      "angry": 1
-    }
+      "unsure": 2
+    },
+    "decisionPrompt": "国政選挙について、生活への影響を踏まえてどう判断するべきか。",
+    "impactAreas": [
+      "rights",
+      "region"
+    ],
+    "sourceKind": "official"
   },
   {
     "id": "takaichi-policy-001",
@@ -215,12 +269,10 @@
     "targetId": "takaichi-sanae",
     "targetLabel": "高市 早苗",
     "reactions": {
-      "agree": 2,
-      "oppose": 3,
-      "source": 1,
-      "important": 5,
-      "impact": 4,
-      "angry": 1
+      "concern": 4,
+      "angry": 1,
+      "hope": 2,
+      "curious": 1
     },
     "createdAt": "2026-07-10T05:56:54.167Z",
     "updatedAt": "2026-07-10T08:44:54.167Z",
@@ -229,7 +281,18 @@
     "pinned": false,
     "locked": false,
     "slowModeSeconds": 30,
-    "moderationNote": "人物論に流れやすいため slow mode 30 秒。"
+    "moderationNote": "人物論に流れやすいため slow mode 30 秒。",
+    "positions": {
+      "support": 2,
+      "oppose": 3,
+      "unsure": 1
+    },
+    "decisionPrompt": "高市 早苗について、生活への影響を踏まえてどう判断するべきか。",
+    "impactAreas": [
+      "rights",
+      "region"
+    ],
+    "sourceKind": "official"
   },
   {
     "id": "tamaki-session-001",
@@ -248,12 +311,10 @@
     "targetId": "tamaki-yuichiro",
     "targetLabel": "玉木 雄一郎",
     "reactions": {
-      "agree": 4,
-      "oppose": 2,
-      "source": 1,
-      "important": 4,
-      "impact": 5,
-      "angry": 1
+      "concern": 5,
+      "angry": 1,
+      "hope": 4,
+      "curious": 1
     },
     "createdAt": "2026-07-10T04:56:54.167Z",
     "updatedAt": "2026-07-10T07:56:54.167Z",
@@ -262,6 +323,17 @@
     "pinned": false,
     "locked": false,
     "slowModeSeconds": 15,
-    "moderationNote": "議論速度を整えるため slow mode 15 秒。"
+    "moderationNote": "議論速度を整えるため slow mode 15 秒。",
+    "positions": {
+      "support": 4,
+      "oppose": 2,
+      "unsure": 1
+    },
+    "decisionPrompt": "玉木 雄一郎について、生活への影響を踏まえてどう判断するべきか。",
+    "impactAreas": [
+      "household",
+      "future"
+    ],
+    "sourceKind": "official"
   }
 ]

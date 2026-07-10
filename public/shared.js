@@ -103,6 +103,18 @@
       return "リアクションを選び直してください。";
     }
 
+    if (error.message === "fact_requires_source") {
+      return "事実・データとして投稿する場合は、確認できる出典URLが必要です。";
+    }
+
+    if (error.message === "invalid_impact_areas") {
+      return "生活への影響を1〜3個選んでください。";
+    }
+
+    if (error.message === "invalid_decision_prompt") {
+      return "みんなに判断してほしい問いを、もう少し具体的に書いてください。";
+    }
+
     return error.message;
   }
 
@@ -167,9 +179,9 @@
         <div class="flat-table-head">
           <span>スレ</span>
           <span>${middleLabel}</span>
-          <span>勢い</span>
+          <span>整理度</span>
           <span>レス</span>
-          <span>更新</span>
+          <span>根拠</span>
         </div>
         ${threads
           .map((thread) => {
@@ -184,9 +196,9 @@
                   <div class="inline-row">${renderBadges(thread)} ${renderTarget(thread.target)} ${renderTags(thread.tags)}</div>
                 </div>
                 <div>${middleValue}</div>
-                <div class="numeric-cell">${numberFormat.format(thread.heat || 0)}</div>
-                <div class="numeric-cell">${numberFormat.format(thread.commentCount || 0)}<span class="reaction-mini"> / ${numberFormat.format(thread.reactionTotal || 0)}</span></div>
-                <div class="numeric-cell">${escapeHtml(relativeTime(thread.lastActivityAt || thread.createdAt))}</div>
+                <div class="numeric-cell">${numberFormat.format(thread.value || 0)}</div>
+                <div class="numeric-cell">${numberFormat.format(thread.commentCount || 0)}</div>
+                <div class="numeric-cell">${numberFormat.format(thread.evidenceRate || 0)}%</div>
               </a>
             `;
           })
@@ -212,6 +224,42 @@
     element.textContent = message;
   }
 
+  function readLocal(key, fallback) {
+    try {
+      const value = JSON.parse(localStorage.getItem(`seikei:${key}`));
+      return value ?? fallback;
+    } catch {
+      return fallback;
+    }
+  }
+
+  function writeLocal(key, value) {
+    localStorage.setItem(`seikei:${key}`, JSON.stringify(value));
+  }
+
+  function isWatched(threadId) {
+    return readLocal("watchedThreads", []).includes(threadId);
+  }
+
+  function toggleWatch(threadId) {
+    const watched = new Set(readLocal("watchedThreads", []));
+    if (watched.has(threadId)) watched.delete(threadId);
+    else watched.add(threadId);
+    const next = [...watched];
+    writeLocal("watchedThreads", next);
+    return next.includes(threadId);
+  }
+
+  function rememberAction(kind, id, value) {
+    const actions = readLocal(kind, {});
+    actions[id] = value;
+    writeLocal(kind, actions);
+  }
+
+  function rememberedAction(kind, id) {
+    return readLocal(kind, {})[id] || "";
+  }
+
   window.BoardShared = {
     escapeHtml,
     requestJson,
@@ -227,5 +275,11 @@
     renderTarget,
     renderThreadRows,
     setFeedback,
+    readLocal,
+    writeLocal,
+    isWatched,
+    toggleWatch,
+    rememberAction,
+    rememberedAction,
   };
 })();

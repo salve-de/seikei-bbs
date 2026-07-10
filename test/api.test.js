@@ -42,9 +42,11 @@ test("home exposes issues and verified politician targets", async () => {
   assert.equal(response.status, 200);
   const payload = await response.json();
 
-  assert.equal(payload.featured.dailyIssues.length, 4);
+  assert.equal(payload.featured.dailyIssues.length, 6);
   assert.equal(payload.featured.politicians.length, 6);
-  assert.equal(payload.featured.dailyIssues[0].reactions.length, 6);
+  assert.equal(payload.featured.dailyIssues[0].reactions.length, 4);
+  assert.ok(payload.featured.dailyIssues[0].decisionPrompt);
+  assert.ok(payload.featured.dailyIssues[0].impactAreas.length > 0);
 
   const politicianResponse = await fetch(`${baseUrl}/api/politicians/takaichi-sanae`);
   assert.equal(politicianResponse.status, 200);
@@ -77,19 +79,63 @@ test("reactions persist and enforce a per-type cooldown", async () => {
   const firstResponse = await fetch(`${baseUrl}/api/threads/${created.thread.id}/reactions`, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ reaction: "important" }),
+    body: JSON.stringify({ reaction: "curious" }),
   });
   assert.equal(firstResponse.status, 201);
   const firstPayload = await firstResponse.json();
-  assert.equal(firstPayload.thread.reactions.find((item) => item.id === "important").count, 1);
+  assert.equal(firstPayload.thread.reactions.find((item) => item.id === "curious").count, 1);
 
   const secondResponse = await fetch(`${baseUrl}/api/threads/${created.thread.id}/reactions`, {
     method: "POST",
     headers: { "content-type": "application/json" },
-    body: JSON.stringify({ reaction: "important" }),
+    body: JSON.stringify({ reaction: "curious" }),
   });
   assert.equal(secondResponse.status, 429);
   assert.equal((await secondResponse.json()).error, "reaction_cooldown");
+});
+
+test("a position is hidden-client compatible and structured comments require sources for facts", async () => {
+  const createdResponse = await createThread({ author: "structured-test" });
+  const created = await createdResponse.json();
+
+  const positionResponse = await fetch(`${baseUrl}/api/threads/${created.thread.id}/positions`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ position: "unsure" }),
+  });
+  assert.equal(positionResponse.status, 201);
+  assert.equal((await positionResponse.json()).thread.positionTotal, 1);
+
+  const invalidComment = await fetch(`${baseUrl}/api/threads/${created.thread.id}/comments`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      author: "検証者",
+      body: "これは事実として述べる投稿です。",
+      stance: "unsure",
+      claimType: "fact",
+      impactAreas: ["household"],
+    }),
+  });
+  assert.equal(invalidComment.status, 400);
+  assert.equal((await invalidComment.json()).error, "fact_requires_source");
+
+  const commentResponse = await fetch(`${baseUrl}/api/threads/${created.thread.id}/comments`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({
+      author: "検証者",
+      body: "公式資料の記述を根拠として確認します。",
+      stance: "unsure",
+      claimType: "fact",
+      impactAreas: ["household"],
+      sourceUrl: "https://www.soumu.go.jp/",
+    }),
+  });
+  assert.equal(commentResponse.status, 201);
+  const comment = (await commentResponse.json()).comments[0];
+  assert.equal(comment.claimType, "fact");
+  assert.equal(comment.helpfulness.length, 3);
 });
 
 function createThread(overrides = {}) {
@@ -101,9 +147,12 @@ function createThread(overrides = {}) {
       author: "api-test",
       title: "議員と一次情報を紐づけるAPIテスト用スレッド",
       summary: "議員ページ、出典URL、感情リアクションが一連で動くことを確認するテスト用の要約です。",
+      decisionPrompt: "この政策は家計への影響を踏まえて実施するべきか。",
+      impactAreas: ["household", "future"],
       body: "この本文はAPIの統合テスト用です。必要な文字数を満たし、対象と出典が保存されることを確認します。",
       tags: ["テスト", "議員"],
       sourceUrl: "https://www.shugiin.go.jp/",
+      sourceKind: "official",
       targetType: "politician",
       targetId: "takaichi-sanae",
       ...overrides,

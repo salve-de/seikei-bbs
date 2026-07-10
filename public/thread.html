@@ -1,151 +1,52 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>スレッド | 政経フォーラム</title>
-    <meta name="description" content="スレッド詳細" />
-    <link rel="stylesheet" href="/styles.css" />
+    <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>論点 | 政経フォーラム</title><link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <div class="app-shell">
-      <header class="site-header">
-        <div class="site-header-main">
-          <a class="brand" href="/">
-            <span class="brand-mark" aria-hidden="true"></span>
-            <span class="brand-copy">
-              <span class="brand-kicker">Political Economy Forum</span>
-              <strong>政経フォーラム</strong>
-            </span>
-          </a>
+      <header class="site-header"><div class="site-header-main"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><span class="brand-kicker">Political Economy Forum</span><strong>政経フォーラム</strong></span></a><nav class="primary-nav"><a class="nav-link" href="/">今日の争点</a><a class="nav-link" href="/politicians">議員</a><a class="nav-link" href="/new">論点を立てる</a></nav></div><div id="roomTabs" class="room-strip"></div></header>
+      <main class="page thread-page">
+        <nav id="threadBreadcrumb" class="breadcrumb"></nav>
+        <article class="thread-lead">
+          <div class="thread-lead-main"><div id="threadBadges" class="inline-row"></div><h1 id="threadTitle">論点</h1><p id="threadSummary"></p><div id="threadMeta" class="meta-strip"></div></div>
+          <div class="thread-lead-actions"><button id="watchButton" class="watch-button watch-button-large" type="button" title="あとで追う" aria-label="あとで追う">☆</button><button id="reportThreadButton" class="button button-muted" type="button">通報</button></div>
+        </article>
+        <section id="threadSource" class="source-block"></section>
 
-          <nav class="primary-nav" aria-label="主要ページ">
-            <a class="nav-link" href="/">今日の争点</a>
-            <a class="nav-link" href="/politicians">議員</a>
-            <a class="nav-link" href="/new">新規スレ</a>
-            <a class="nav-link" href="/moderation">モデレーション</a>
-          </nav>
+        <section class="judgment-band">
+          <div><p class="eyebrow">Your position</p><h2 id="decisionPrompt">あなたはどう考える？</h2><p>先に自分で選ぶと、全体の分布が見えます。</p></div>
+          <div><div id="positionBar" class="position-buttons"></div><div id="positionResult" class="position-result" hidden></div><p id="positionFeedback" class="form-feedback" hidden></p></div>
+        </section>
+
+        <div class="thread-columns">
+          <section class="panel">
+            <div class="section-head"><h2>議論</h2><div class="segmented-control compact"><button class="segment is-active" data-sort="useful">参考順</button><button class="segment" data-sort="new">新着順</button><button class="segment" data-sort="changed">見方が変わった</button></div></div>
+            <div id="discussionSummary" class="discussion-summary"></div>
+            <div id="commentList" class="comment-list"></div>
+          </section>
+
+          <aside class="discussion-composer">
+            <form id="commentForm" class="composer-panel">
+              <div><p class="eyebrow">Add perspective</p><h2>あなたの見方を残す</h2></div>
+              <label class="field"><span>立場</span><select id="commentStance" required></select></label>
+              <label class="field"><span>何を根拠にする？</span><select id="commentClaimType" required></select></label>
+              <fieldset class="field"><legend>どこに影響する？</legend><div id="commentImpacts" class="check-grid"></div></fieldset>
+              <label class="field"><span>名前</span><input id="commentAuthor" maxlength="32" placeholder="名無しさん" /></label>
+              <label class="field"><span>本文</span><textarea id="commentBody" rows="7" maxlength="1000" required></textarea></label>
+              <label id="commentSourceField" class="field" hidden><span>出典URL</span><input id="commentSource" type="url" /></label>
+              <p id="commentFeedback" class="form-feedback" hidden></p>
+              <button id="commentSubmit" class="button button-primary" type="submit">投稿する</button>
+            </form>
+          </aside>
         </div>
 
-        <div id="roomTabs" class="room-strip" aria-label="部屋一覧"></div>
-      </header>
-
-      <main class="page">
-        <nav id="threadBreadcrumb" class="breadcrumb" aria-label="パンくず"></nav>
-
-        <section class="panel">
-          <div class="section-head">
-            <h1 id="threadTitle">スレッド</h1>
-            <div class="button-row">
-              <a id="roomBackLink" class="button button-muted" href="/">部屋</a>
-              <button id="reportThreadButton" class="button button-muted" type="button">通報</button>
-            </div>
-          </div>
-          <div id="threadMeta" class="meta-strip"></div>
-          <div id="threadBadges" class="tag-row"></div>
-          <div id="threadSource" class="source-block"></div>
-          <div id="threadBodyContent" class="prose-block"></div>
-        </section>
-
-        <section class="panel">
-          <div class="section-head">
-            <h2>この話をどう感じた？</h2>
-            <span id="reactionTotal" class="count-label">0</span>
-          </div>
-          <div id="reactionBar" class="reaction-bar"></div>
-          <p id="reactionFeedback" class="form-feedback" hidden></p>
-        </section>
-
-        <section class="panel">
-          <div class="section-head">
-            <h2>操作</h2>
-            <div class="button-row">
-              <button class="button button-muted" type="button" data-mod-action="toggle-pin">固定</button>
-              <button class="button button-muted" type="button" data-mod-action="toggle-lock">ロック</button>
-              <button class="button button-muted" type="button" data-mod-action="set-slow-mode" data-seconds="60">slow 60</button>
-              <button class="button button-muted" type="button" data-mod-action="set-slow-mode" data-seconds="0">slow 解除</button>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel">
-          <div class="section-head">
-            <h2>コメント</h2>
-            <span id="commentMeta" class="count-label">0</span>
-          </div>
-
-          <form id="commentForm" class="form-stack compact-form">
-            <div class="form-grid">
-              <label class="field">
-                <span>名前</span>
-                <input id="commentAuthor" type="text" maxlength="32" placeholder="名無しさん" />
-              </label>
-
-              <label class="field field-full">
-                <span>本文</span>
-                <textarea id="commentBody" rows="4" maxlength="1000"></textarea>
-              </label>
-            </div>
-
-            <p id="commentFeedback" class="form-feedback" hidden></p>
-
-            <div class="form-actions">
-              <button id="commentSubmit" class="button button-primary" type="submit">投稿</button>
-            </div>
-          </form>
-
-          <div id="commentList" class="flat-list"></div>
-        </section>
-
-        <section id="relatedSection" class="panel" hidden>
-          <div class="section-head">
-            <h2>同じ部屋</h2>
-          </div>
-          <div id="relatedThreads" class="flat-list"></div>
-        </section>
+        <section id="relatedSection" class="panel" hidden><div class="section-head"><h2>関連する論点</h2></div><div id="relatedThreads" class="flat-list"></div></section>
       </main>
     </div>
 
-    <dialog id="reportDialog" class="modal-shell">
-      <form id="reportForm" class="modal-card" method="dialog">
-        <div class="section-head">
-          <h2 id="reportTitle">通報</h2>
-          <button class="icon-button" type="button" id="closeReport" aria-label="閉じる">×</button>
-        </div>
-
-        <div class="form-grid">
-          <label class="field">
-            <span>名前</span>
-            <input id="reporterName" type="text" maxlength="32" placeholder="匿名通報" />
-          </label>
-
-          <label class="field">
-            <span>理由</span>
-            <select id="reportReason">
-              <option>誹謗中傷</option>
-              <option>個人攻撃</option>
-              <option>デマ</option>
-              <option>スパム</option>
-              <option>荒らし</option>
-              <option>その他</option>
-            </select>
-          </label>
-
-          <label class="field field-full">
-            <span>詳細</span>
-            <textarea id="reportDetails" rows="5" maxlength="400"></textarea>
-          </label>
-        </div>
-
-        <p id="reportFeedback" class="form-feedback" hidden></p>
-
-        <div class="form-actions">
-          <button class="button button-primary" type="submit">送信</button>
-        </div>
-      </form>
-    </dialog>
-
-    <script src="/shared.js"></script>
-    <script src="/thread.js"></script>
+    <dialog id="reportDialog" class="modal-shell"><form id="reportForm" class="modal-card" method="dialog"><div class="section-head"><h2 id="reportTitle">通報</h2><button class="icon-button" type="button" id="closeReport" aria-label="閉じる">×</button></div><div class="form-grid"><label class="field"><span>名前</span><input id="reporterName" maxlength="32" placeholder="匿名通報" /></label><label class="field"><span>理由</span><select id="reportReason"><option>誹謗中傷</option><option>個人攻撃</option><option>デマ</option><option>スパム</option><option>荒らし</option><option>その他</option></select></label><label class="field field-full"><span>詳細</span><textarea id="reportDetails" rows="4" maxlength="400"></textarea></label></div><p id="reportFeedback" class="form-feedback" hidden></p><div class="form-actions"><button class="button button-primary" type="submit">送信</button></div></form></dialog>
+    <script src="/shared.js"></script><script src="/thread.js"></script>
   </body>
 </html>
