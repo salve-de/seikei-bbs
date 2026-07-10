@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>議員 | 政経フォーラム</title>
+    <meta name="description" content="議員に紐づく議論と一次情報" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="site-header">
+        <div class="site-header-main">
+          <a class="brand" href="/">
+            <span class="brand-mark" aria-hidden="true"></span>
+            <span class="brand-copy">
+              <span class="brand-kicker">Political Economy Forum</span>
+              <strong>政経フォーラム</strong>
+            </span>
+          </a>
+          <nav class="primary-nav" aria-label="主要ページ">
+            <a class="nav-link" href="/">今日の争点</a>
+            <a class="nav-link is-active" href="/politicians">議員</a>
+            <a class="nav-link" href="/new">新規スレ</a>
+            <a class="nav-link" href="/moderation">モデレーション</a>
+          </nav>
+        </div>
+        <div id="roomTabs" class="room-strip" aria-label="部屋一覧"></div>
+      </header>
+
+      <main class="page">
+        <nav class="breadcrumb" aria-label="パンくず">
+          <a href="/">ホーム</a><span>/</span><a href="/politicians">議員</a>
+        </nav>
+
+        <section id="politicianProfile" class="politician-profile"></section>
+
+        <div class="profile-columns">
+          <section class="panel">
+            <div class="section-head">
+              <h2>この議員を対象にした議論</h2>
+              <span id="politicianThreadCount" class="count-label">0</span>
+            </div>
+            <div id="politicianThreads"></div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head"><h2>集まっている感情</h2></div>
+            <div id="politicianEmotions" class="emotion-overview"></div>
+          </section>
+        </div>
+      </main>
+    </div>
+
+    <script src="/shared.js"></script>
+    <script src="/politician.js"></script>
+  </body>
+</html>

@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>政経フォーラム</title>
-    <meta name="description" content="政治と経済の掲示板" />
+    <title>今日の争点 | 政経フォーラム</title>
+    <meta name="description" content="政治と経済のニュースを一次情報から議論する掲示板" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
@@ -20,7 +20,8 @@
           </a>
 
           <nav class="primary-nav" aria-label="主要ページ">
-            <a class="nav-link is-active" href="/">ホーム</a>
+            <a class="nav-link is-active" href="/">今日の争点</a>
+            <a class="nav-link" href="/politicians">議員</a>
             <a class="nav-link" href="/new">新規スレ</a>
             <a class="nav-link" href="/moderation">モデレーション</a>
           </nav>
@@ -30,29 +31,51 @@
       </header>
 
       <main class="page">
-        <section class="panel">
-          <div class="section-head">
-            <h1>板一覧</h1>
-            <a class="button button-primary" href="/new">新規スレ</a>
+        <section class="pulse-band">
+          <div>
+            <p class="eyebrow">Today's pulse</p>
+            <h1>今日の争点</h1>
+            <p class="pulse-lead">物価、税、政治とカネ。いま動いている論点を追う。</p>
           </div>
-          <div class="meta-strip">
-            <span>スレ <strong id="homeThreadCount">0</strong></span>
-            <span>レス <strong id="homeCommentCount">0</strong></span>
+          <div class="pulse-actions">
+            <div class="pulse-stat"><strong id="homeThreadCount">0</strong><span>スレ</span></div>
+            <div class="pulse-stat"><strong id="homeCommentCount">0</strong><span>レス</span></div>
+            <a class="button button-primary" href="/new">論点を立てる</a>
           </div>
         </section>
 
+        <section class="unframed-section">
+          <div class="section-title-row">
+            <div>
+              <p class="eyebrow">Emotion & evidence</p>
+              <h2>いま感情が動いている</h2>
+            </div>
+          </div>
+          <div id="dailyIssueGrid" class="issue-grid"></div>
+        </section>
+
+        <div class="home-columns">
+          <section class="panel">
+            <div class="section-head">
+              <h2>勢いのある議論</h2>
+            </div>
+            <div id="featuredHotThreads"></div>
+          </section>
+
+          <section class="panel">
+            <div class="section-head">
+              <h2>議員から探す</h2>
+              <a class="button button-text" href="/politicians">一覧</a>
+            </div>
+            <div id="featuredPoliticians" class="politician-list"></div>
+          </section>
+        </div>
+
         <section class="panel">
           <div class="section-head">
-            <h2>部屋</h2>
+            <h2>テーマ別の部屋</h2>
           </div>
           <div id="roomDirectory" class="flat-table"></div>
-        </section>
-
-        <section class="panel">
-          <div class="section-head">
-            <h2>勢い</h2>
-          </div>
-          <div id="featuredHotThreads"></div>
         </section>
       </main>
     </div>

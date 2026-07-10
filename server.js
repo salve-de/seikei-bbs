@@ -10,15 +10,34 @@ const DEFAULT_PORT = Number(process.env.PORT || 4173);
 const MAX_PORT_ATTEMPTS = 20;
 const LOCAL_HOSTS = ["127.0.0.1", "::1"];
 const ROOT = __dirname;
-const DATA_DIR = path.join(ROOT, "data");
+const DATA_DIR = process.env.DATA_DIR ? path.resolve(process.env.DATA_DIR) : path.join(ROOT, "data");
 const PUBLIC_DIR = path.join(ROOT, "public");
 const THREADS_FILE = path.join(DATA_DIR, "threads.json");
 const COMMENTS_FILE = path.join(DATA_DIR, "comments.json");
 const REPORTS_FILE = path.join(DATA_DIR, "reports.json");
+const politicianDefinitions = require("./data/politicians.json");
 const THREAD_COOLDOWN_MS = 30_000;
 const DEFAULT_COMMENT_COOLDOWN_MS = 15_000;
+const REACTION_COOLDOWN_MS = 10 * 60_000;
 const MAX_THREAD_COUNT = 300;
 const MAX_COMMENT_COUNT = 500;
+
+const targetDefinitions = [
+  { id: "policy", label: "政策" },
+  { id: "politician", label: "議員" },
+  { id: "party", label: "政党・会派" },
+  { id: "district", label: "選挙区・地域" },
+  { id: "economy", label: "経済指標・市場" },
+];
+
+const reactionDefinitions = [
+  { id: "agree", label: "同意", tone: "support" },
+  { id: "oppose", label: "反対", tone: "oppose" },
+  { id: "source", label: "ソース欲しい", tone: "source" },
+  { id: "important", label: "重要", tone: "important" },
+  { id: "impact", label: "生活に直撃", tone: "impact" },
+  { id: "angry", label: "怒り", tone: "angry" },
+];
 
 const roomDefinitions = [
   {
@@ -87,6 +106,14 @@ app.get("/new", (_request, response) => {
   response.sendFile(path.join(PUBLIC_DIR, "new.html"));
 });
 
+app.get("/politicians", (_request, response) => {
+  response.sendFile(path.join(PUBLIC_DIR, "politicians.html"));
+});
+
+app.get("/politician/:politicianId", (_request, response) => {
+  response.sendFile(path.join(PUBLIC_DIR, "politician.html"));
+});
+
 app.get("/thread/:threadId", (_request, response) => {
   response.sendFile(path.join(PUBLIC_DIR, "thread.html"));
 });
@@ -103,6 +130,32 @@ app.get("/api/board", (_request, response) => {
 
 app.get("/api/home", (_request, response) => {
   response.json(buildHomePayload());
+});
+
+app.get("/api/politicians", (_request, response) => {
+  response.json({
+    politicians: politicianDefinitions.map((politician) => decoratePolitician(politician)),
+    rooms: roomDefinitions,
+    meta: {
+      verifiedAt: latestPoliticianVerificationDate(),
+    },
+  });
+});
+
+app.get("/api/politicians/:politicianId", (request, response) => {
+  const politician = findPolitician(request.params.politicianId);
+
+  if (!politician) {
+    response.status(404).json({ error: "politician_not_found" });
+    return;
+  }
+
+  response.json({
+    politician: decoratePolitician(politician),
+    threads: sortThreads(threadsForPolitician(politician.id)),
+    rooms: roomDefinitions,
+    reactionDefinitions,
+  });
 });
 
 app.get("/api/rooms/:roomId", (request, response) => {
@@ -128,9 +181,8 @@ app.get("/api/threads/:threadId", (request, response) => {
     thread: decorateThread(thread),
     room: findRoom(thread.room),
     comments: decorateComments(thread.id),
-    relatedThreads: sortThreads(
-      threadsForRoom(thread.room).filter((item) => item.id !== thread.id)
-    ).slice(0, 5),
+    relatedThreads: relatedThreadsForThread(thread),
+    reactionDefinitions,
   });
 });
 
@@ -149,6 +201,7 @@ app.post("/api/threads", async (request, response) => {
   const sourceUrl = normalizeUrl(request.body?.sourceUrl);
   const tags = normalizeTags(request.body?.tags);
   const megathread = Boolean(request.body?.megathread);
+  const target = normalizeThreadTarget(request.body);
 
   if (!roomDefinitions.some((item) => item.id === room)) {
     response.status(400).json({ error: "invalid_room" });
@@ -175,6 +228,16 @@ app.post("/api/threads", async (request, response) => {
     return;
   }
 
+  if (!sourceUrl) {
+    response.status(400).json({ error: "invalid_source_url" });
+    return;
+  }
+
+  if (!target) {
+    response.status(400).json({ error: "invalid_thread_target" });
+    return;
+  }
+
   const threadFingerprint = actionFingerprint(request, author, `thread:${room}`);
   const blockedUntil = nextAllowedAt(threadFingerprint, THREAD_COOLDOWN_MS);
 
@@ -196,6 +259,8 @@ app.post("/api/threads", async (request, response) => {
     body,
     sourceUrl,
     tags,
+    ...target,
+    reactions: emptyReactionCounts(),
     createdAt: now,
     updatedAt: now,
     lastCommentAt: null,
@@ -218,6 +283,48 @@ app.post("/api/threads", async (request, response) => {
     ok: true,
     thread: decorateThread(thread),
     board: buildBoardPayload(),
+  });
+});
+
+app.post("/api/threads/:threadId/reactions", async (request, response) => {
+  const thread = boardState.threads.find((item) => item.id === request.params.threadId);
+
+  if (!thread) {
+    response.status(404).json({ error: "thread_not_found" });
+    return;
+  }
+
+  const reactionId = normalizeText(request.body?.reaction);
+  if (!reactionDefinitions.some((item) => item.id === reactionId)) {
+    response.status(400).json({ error: "invalid_reaction" });
+    return;
+  }
+
+  const reactionFingerprint = actionFingerprint(
+    request,
+    "anonymous",
+    `reaction:${thread.id}:${reactionId}`
+  );
+  const blockedUntil = nextAllowedAt(reactionFingerprint, REACTION_COOLDOWN_MS);
+
+  if (blockedUntil) {
+    response.status(429).json({
+      error: "reaction_cooldown",
+      nextAllowedAt: blockedUntil,
+    });
+    return;
+  }
+
+  const reactionCounts = normalizeReactionCounts(thread.reactions);
+  reactionCounts[reactionId] += 1;
+  thread.reactions = reactionCounts;
+  boardState.rateLimits.set(reactionFingerprint, Date.now());
+
+  await persistBoard();
+
+  response.status(201).json({
+    ok: true,
+    thread: decorateThread(thread),
   });
 });
 
@@ -483,6 +590,9 @@ function buildBoardPayload() {
   return {
     rooms: roomDefinitions,
     threads: boardState.threads.map((thread) => decorateThread(thread)),
+    politicians: politicianDefinitions.map((politician) => decoratePolitician(politician)),
+    targetDefinitions,
+    reactionDefinitions,
     moderation: buildModerationSummary(),
     meta: {
       lastSavedAt: boardState.lastSavedAt,
@@ -514,6 +624,7 @@ function buildHomePayload() {
       };
     }),
     featured: {
+      dailyIssues: threads.slice(0, 4),
       hotThreads: threads.slice(0, 8),
       newestThreads: [...threads]
         .sort(
@@ -523,6 +634,10 @@ function buildHomePayload() {
         )
         .slice(0, 8),
       megathreads: threads.filter((thread) => thread.megathread).slice(0, 6),
+      politicians: politicianDefinitions
+        .map((politician) => decoratePolitician(politician))
+        .sort((left, right) => right.activityCount - left.activityCount)
+        .slice(0, 6),
     },
     moderation: buildModerationSummary(),
     meta: {
@@ -584,15 +699,44 @@ function decorateThread(thread) {
       (item.threadId === thread.id || (item.targetType === "thread" && item.targetId === thread.id))
   ).length;
   const lastActivityAt = comments[0]?.createdAt || thread.updatedAt || thread.createdAt;
+  const reactionCounts = normalizeReactionCounts(thread.reactions);
+  const reactions = reactionDefinitions.map((definition) => ({
+    ...definition,
+    count: reactionCounts[definition.id],
+  }));
+  const reactionTotal = reactions.reduce((sum, item) => sum + item.count, 0);
 
   return {
     ...thread,
+    target: resolveThreadTarget(thread),
+    reactions,
+    reactionTotal,
     commentCount: comments.length,
     lastActivityAt,
     pendingReportsCount,
-    heat: computeHeat(thread, comments.length, lastActivityAt, pendingReportsCount),
+    heat: computeHeat(thread, comments.length, lastActivityAt, pendingReportsCount, reactionTotal),
     freshness: computeFreshness(lastActivityAt),
     value: computeValue(thread, comments.length),
+  };
+}
+
+function decoratePolitician(politician) {
+  const threads = threadsForPolitician(politician.id);
+  const reactionCount = threads.reduce((sum, thread) => sum + thread.reactionTotal, 0);
+  const commentCount = threads.reduce((sum, thread) => sum + thread.commentCount, 0);
+  const latestActivityAt = threads
+    .map((thread) => thread.lastActivityAt)
+    .filter(Boolean)
+    .sort()
+    .at(-1) || null;
+
+  return {
+    ...politician,
+    threadCount: threads.length,
+    commentCount,
+    reactionCount,
+    activityCount: threads.length + commentCount + reactionCount,
+    latestActivityAt,
   };
 }
 
@@ -647,11 +791,12 @@ function topTagsForThreads(threads, limit = 12) {
     .map(([tag, count]) => ({ tag, count }));
 }
 
-function computeHeat(thread, commentCount, lastActivityAt, pendingReportsCount) {
+function computeHeat(thread, commentCount, lastActivityAt, pendingReportsCount, reactionTotal = 0) {
   const ageHours = Math.max(0, (Date.now() - new Date(lastActivityAt).getTime()) / 36e5);
   let score = 34;
   score += Math.max(0, 42 - ageHours * 5);
   score += commentCount * 7;
+  score += Math.min(reactionTotal * 2, 18);
   score += thread.pinned ? 10 : 0;
   score += thread.megathread ? 8 : 0;
   score += pendingReportsCount * 2;
@@ -693,8 +838,38 @@ function threadsForRoom(roomId) {
     .map((thread) => decorateThread(thread));
 }
 
+function threadsForPolitician(politicianId) {
+  return boardState.threads
+    .filter((thread) => thread.targetType === "politician" && thread.targetId === politicianId)
+    .map((thread) => decorateThread(thread));
+}
+
+function relatedThreadsForThread(thread) {
+  const related = boardState.threads.filter((item) => item.id !== thread.id);
+  const sameTarget = related.filter(
+    (item) =>
+      thread.targetType &&
+      item.targetType === thread.targetType &&
+      item.targetId === thread.targetId &&
+      item.targetLabel === thread.targetLabel
+  );
+  const sameRoom = related.filter(
+    (item) => item.room === thread.room && !sameTarget.some((target) => target.id === item.id)
+  );
+
+  return sortThreads([...sameTarget, ...sameRoom].map((item) => decorateThread(item))).slice(0, 5);
+}
+
 function findRoom(roomId) {
   return roomDefinitions.find((room) => room.id === roomId) || null;
+}
+
+function findPolitician(politicianId) {
+  return politicianDefinitions.find((politician) => politician.id === politicianId) || null;
+}
+
+function latestPoliticianVerificationDate() {
+  return politicianDefinitions.map((politician) => politician.verifiedAt).sort().at(-1) || null;
 }
 
 function totalCommentCount() {
@@ -741,6 +916,72 @@ function normalizeTags(value) {
   return unique;
 }
 
+function normalizeThreadTarget(value) {
+  const targetType = normalizeText(value?.targetType);
+  if (!targetDefinitions.some((definition) => definition.id === targetType)) {
+    return null;
+  }
+
+  if (targetType === "politician") {
+    const politician = findPolitician(normalizeText(value?.targetId));
+    if (!politician) {
+      return null;
+    }
+
+    return {
+      targetType,
+      targetId: politician.id,
+      targetLabel: politician.name,
+    };
+  }
+
+  const targetLabel = normalizeText(value?.targetLabel).slice(0, 60);
+  if (targetLabel.length < 2) {
+    return null;
+  }
+
+  return {
+    targetType,
+    targetId: makeId(`${targetType}:${targetLabel.toLowerCase()}`),
+    targetLabel,
+  };
+}
+
+function resolveThreadTarget(thread) {
+  const definition = targetDefinitions.find((item) => item.id === thread.targetType);
+  if (!definition) {
+    return null;
+  }
+
+  const politician = thread.targetType === "politician" ? findPolitician(thread.targetId) : null;
+
+  return {
+    type: thread.targetType,
+    typeLabel: definition.label,
+    id: thread.targetId || "",
+    label: politician?.name || thread.targetLabel || "",
+    href: politician ? `/politician/${politician.id}` : "",
+  };
+}
+
+function emptyReactionCounts() {
+  return Object.fromEntries(reactionDefinitions.map((definition) => [definition.id, 0]));
+}
+
+function normalizeReactionCounts(value) {
+  const counts = emptyReactionCounts();
+
+  if (!value || Array.isArray(value) || typeof value !== "object") {
+    return counts;
+  }
+
+  for (const definition of reactionDefinitions) {
+    counts[definition.id] = clamp(Math.floor(Number(value[definition.id]) || 0), 0, 1_000_000);
+  }
+
+  return counts;
+}
+
 function normalizeText(value) {
   return String(value || "").replace(/\s+/g, " ").trim();
 }
@@ -753,6 +994,9 @@ function normalizeUrl(value) {
 
   try {
     const url = new URL(input);
+    if (!["http:", "https:"].includes(url.protocol)) {
+      return "";
+    }
     return url.toString();
   } catch {
     return "";
@@ -775,6 +1019,7 @@ async function loadBoard() {
   const loadedThreads = await readJson(THREADS_FILE, null);
   const loadedComments = await readJson(COMMENTS_FILE, null);
   const loadedReports = await readJson(REPORTS_FILE, null);
+  const seeded = seedBoard();
 
   if (
     !Array.isArray(loadedThreads) ||
@@ -782,7 +1027,6 @@ async function loadBoard() {
     !Array.isArray(loadedReports) ||
     isLegacyThreadShape(loadedThreads)
   ) {
-    const seeded = seedBoard();
     boardState.threads = seeded.threads;
     boardState.comments = seeded.comments;
     boardState.reports = seeded.reports;
@@ -790,10 +1034,50 @@ async function loadBoard() {
     return;
   }
 
-  boardState.threads = loadedThreads;
-  boardState.comments = loadedComments;
+  const seedThreadsById = new Map(seeded.threads.map((thread) => [thread.id, thread]));
+  const migratedThreads = loadedThreads.map((thread) =>
+    migrateThread(thread, seedThreadsById.get(thread.id))
+  );
+  const missingFeatureSeeds = seeded.threads.filter(
+    (thread) =>
+      ["takaichi-policy-001", "tamaki-session-001"].includes(thread.id) &&
+      !migratedThreads.some((item) => item.id === thread.id)
+  );
+
+  boardState.threads = [...migratedThreads, ...missingFeatureSeeds];
+  boardState.comments = { ...loadedComments };
+  for (const thread of missingFeatureSeeds) {
+    boardState.comments[thread.id] = seeded.comments[thread.id] || [];
+  }
   boardState.reports = loadedReports;
-  boardState.lastSavedAt = await readLatestStorageTimestamp();
+  const requiresMigration =
+    JSON.stringify(boardState.threads) !== JSON.stringify(loadedThreads) ||
+    JSON.stringify(boardState.comments) !== JSON.stringify(loadedComments);
+
+  if (requiresMigration) {
+    await persistBoard();
+  } else {
+    boardState.lastSavedAt = await readLatestStorageTimestamp();
+  }
+}
+
+function migrateThread(thread, fallback = {}) {
+  const targetType = targetDefinitions.some((item) => item.id === thread.targetType)
+    ? thread.targetType
+    : fallback.targetType || "policy";
+  const targetLabel = normalizeText(
+    thread.targetLabel || fallback.targetLabel || thread.tags?.[0] || findRoom(thread.room)?.label
+  );
+
+  return {
+    ...thread,
+    sourceUrl: thread.sourceUrl || fallback.sourceUrl || "",
+    targetType,
+    targetId:
+      thread.targetId || fallback.targetId || makeId(`${targetType}:${targetLabel.toLowerCase()}`),
+    targetLabel,
+    reactions: normalizeReactionCounts(thread.reactions || fallback.reactions),
+  };
 }
 
 function isLegacyThreadShape(threads) {
@@ -824,8 +1108,12 @@ function seedBoard() {
         "献金、パーティー券、監査のどこを塞がないと意味がないのかを継続追跡する総合スレ。",
       body:
         "不祥事そのものの怒りだけでなく、支部経由、監査、公開基準、第三者機関まで分けて議論する。単発ニュースはここへ集約し、重複スレは整理する。",
-      sourceUrl: "",
+      sourceUrl: "https://elaws.e-gov.go.jp/document?lawid=323AC1000000194",
       tags: ["政治資金", "献金", "監査"],
+      targetType: "policy",
+      targetId: "political-funds-control-act",
+      targetLabel: "政治資金規正法",
+      reactions: { agree: 2, oppose: 1, source: 2, important: 4, impact: 1, angry: 5 },
       createdAt: createTime(18),
       updatedAt: createTime(1.5),
       lastCommentAt: createTime(1.5),
@@ -844,8 +1132,12 @@ function seedBoard() {
         "減税賛成/反対ではなく、財源と対象期間と受益層の線引きを先に決めるための議論。",
       body:
         "恒久減税、時限減税、給付、社会保険料軽減のどれが実際に家計へ効くのか。誰が得して誰が漏れるのかを、感情ではなく設計で話す。",
-      sourceUrl: "",
+      sourceUrl: "https://www.mof.go.jp/tax_policy/summary/consumption/index.htm",
       tags: ["減税", "消費税", "財源"],
+      targetType: "policy",
+      targetId: "consumption-tax",
+      targetLabel: "消費税",
+      reactions: { agree: 3, oppose: 2, source: 1, important: 4, impact: 6, angry: 2 },
       createdAt: createTime(9),
       updatedAt: createTime(0.4),
       lastCommentAt: createTime(0.4),
@@ -864,8 +1156,12 @@ function seedBoard() {
         "名目賃金のニュースと生活実感が噛み合わない理由を、固定費、食料、雇用形態で分ける。",
       body:
         "統計の平均だけでなく、中小企業、非正規、住居費の違いまで見ないと生活感覚は拾えない。家計簿ベースの実感を書いてもいいが、どの費目が効いているかは明記する。",
-      sourceUrl: "",
+      sourceUrl: "https://www.stat.go.jp/data/cpi/",
       tags: ["物価高", "実質賃金", "家計"],
+      targetType: "economy",
+      targetId: "consumer-prices",
+      targetLabel: "消費者物価",
+      reactions: { agree: 4, oppose: 0, source: 1, important: 3, impact: 7, angry: 3 },
       createdAt: createTime(6),
       updatedAt: createTime(2.2),
       lastCommentAt: createTime(2.2),
@@ -884,8 +1180,12 @@ function seedBoard() {
         "円安、利上げ観測、輸入物価、株価の動きを1本で追う定点スレ。単発相場実況はここへ寄せる。",
       body:
         "為替だけ、株だけ、日銀だけに切らず、家計、企業、投資家の3方向で議論する。短時間の連投で相場実況化しやすいので slow mode を入れる。",
-      sourceUrl: "",
+      sourceUrl: "https://www.boj.or.jp/mopo/index.htm",
       tags: ["円安", "日銀", "株価", "金利"],
+      targetType: "economy",
+      targetId: "monetary-policy",
+      targetLabel: "金融政策",
+      reactions: { agree: 2, oppose: 2, source: 2, important: 5, impact: 4, angry: 1 },
       createdAt: createTime(12),
       updatedAt: createTime(0.2),
       lastCommentAt: createTime(0.2),
@@ -904,8 +1204,12 @@ function seedBoard() {
         "安全保障の必要性は前提にした上で、税、国債、歳出削減のどこで賄うのかを議論する。",
       body:
         "外交・安全保障は陣営論に流れやすい。だから費用負担、時間軸、エネルギー価格への波及までセットで話す。人格攻撃や国籍ヘイトは即通報対象。",
-      sourceUrl: "",
+      sourceUrl: "https://www.mod.go.jp/j/policy/agenda/guideline/",
       tags: ["防衛費", "安全保障", "税負担"],
+      targetType: "policy",
+      targetId: "defense-spending",
+      targetLabel: "防衛費",
+      reactions: { agree: 2, oppose: 3, source: 3, important: 4, impact: 2, angry: 2 },
       createdAt: createTime(8),
       updatedAt: createTime(3.2),
       lastCommentAt: createTime(3.2),
@@ -924,8 +1228,12 @@ function seedBoard() {
         "支持率だけでなく、物価、政治資金、候補者の地盤、無党派の動きで争点を整理する。",
       body:
         "政党支持の表明だけではなく、どの争点がどの選挙区で効くのかを書いていく。候補者個人の情報は公知の範囲に限定し、私人情報は不可。",
-      sourceUrl: "",
+      sourceUrl: "https://www.soumu.go.jp/senkyo/senkyo_s/index.html",
       tags: ["選挙", "支持率", "無党派"],
+      targetType: "policy",
+      targetId: "national-election",
+      targetLabel: "国政選挙",
+      reactions: { agree: 1, oppose: 1, source: 2, important: 5, impact: 2, angry: 1 },
       createdAt: createTime(10),
       updatedAt: createTime(5.1),
       lastCommentAt: createTime(5.1),
@@ -934,6 +1242,54 @@ function seedBoard() {
       locked: false,
       slowModeSeconds: 0,
       moderationNote: "未設定",
+    },
+    {
+      id: "takaichi-policy-001",
+      room: "election",
+      author: "政策ウォッチ",
+      title: "高市早苗議員の施政方針、家計に効く部分を読む",
+      summary:
+        "施政方針演説に含まれる経済、物価、社会保障の方針を一次資料から読み、生活への影響を分けて考える。",
+      body:
+        "人物への好き嫌いだけで終わらせず、施政方針演説のどの記述が家計、雇用、税負担にどう効くのかを追う。主張を断定するときは該当箇所を示す。",
+      sourceUrl: "https://www.kantei.go.jp/jp/105/statement/2026/0220shiseihoshin.html",
+      tags: ["高市早苗", "施政方針", "経済政策"],
+      targetType: "politician",
+      targetId: "takaichi-sanae",
+      targetLabel: "高市 早苗",
+      reactions: { agree: 2, oppose: 3, source: 1, important: 5, impact: 4, angry: 1 },
+      createdAt: createTime(4),
+      updatedAt: createTime(1.2),
+      lastCommentAt: createTime(1.2),
+      megathread: false,
+      pinned: false,
+      locked: false,
+      slowModeSeconds: 30,
+      moderationNote: "人物論に流れやすいため slow mode 30 秒。",
+    },
+    {
+      id: "tamaki-session-001",
+      room: "tax",
+      author: "国会ログ",
+      title: "玉木雄一郎議員の代表質問、負担軽減策を検証する",
+      summary:
+        "本会議の代表質問を入口に、税と社会保険の負担軽減策が誰にどこまで届くのかを検証する。",
+      body:
+        "会議録の発言を起点に、賛否だけでなく対象者、財源、実施時期を確認する。切り抜きではなく前後の文脈も参照する。",
+      sourceUrl: "https://www.shugiin.go.jp/internet/itdb_kaigiroku.nsf/html/kaigiroku/000122120260225004.htm",
+      tags: ["玉木雄一郎", "代表質問", "負担軽減"],
+      targetType: "politician",
+      targetId: "tamaki-yuichiro",
+      targetLabel: "玉木 雄一郎",
+      reactions: { agree: 4, oppose: 2, source: 1, important: 4, impact: 5, angry: 1 },
+      createdAt: createTime(5),
+      updatedAt: createTime(2),
+      lastCommentAt: createTime(2),
+      megathread: false,
+      pinned: false,
+      locked: false,
+      slowModeSeconds: 15,
+      moderationNote: "議論速度を整えるため slow mode 15 秒。",
     },
   ];
 
@@ -1010,6 +1366,22 @@ function seedBoard() {
         createdAt: createTime(5.1),
       },
     ],
+    "takaichi-policy-001": [
+      {
+        id: "c-takaichi-1",
+        author: "家計目線",
+        body: "成長投資の話と、短期の物価負担を軽くする話は分けて評価したい。",
+        createdAt: createTime(1.2),
+      },
+    ],
+    "tamaki-session-001": [
+      {
+        id: "c-tamaki-1",
+        author: "制度確認中",
+        body: "負担軽減の対象範囲と恒久財源が同時に示されているかを会議録で追いたい。",
+        createdAt: createTime(2),
+      },
+    ],
   };
 
   const reports = [
@@ -1032,9 +1404,9 @@ function seedBoard() {
 }
 
 async function persistBoard() {
-  await fs.writeFile(THREADS_FILE, JSON.stringify(boardState.threads, null, 2), "utf8");
-  await fs.writeFile(COMMENTS_FILE, JSON.stringify(boardState.comments, null, 2), "utf8");
-  await fs.writeFile(REPORTS_FILE, JSON.stringify(boardState.reports, null, 2), "utf8");
+  await fs.writeFile(THREADS_FILE, `${JSON.stringify(boardState.threads, null, 2)}\n`, "utf8");
+  await fs.writeFile(COMMENTS_FILE, `${JSON.stringify(boardState.comments, null, 2)}\n`, "utf8");
+  await fs.writeFile(REPORTS_FILE, `${JSON.stringify(boardState.reports, null, 2)}\n`, "utf8");
   boardState.lastSavedAt = new Date().toISOString();
 }
 

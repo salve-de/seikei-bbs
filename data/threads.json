@@ -6,7 +6,7 @@
     "title": "政治資金規正法 再改正を追うメガスレ",
     "summary": "献金、パーティー券、監査のどこを塞がないと意味がないのかを継続追跡する総合スレ。",
     "body": "不祥事そのものの怒りだけでなく、支部経由、監査、公開基準、第三者機関まで分けて議論する。単発ニュースはここへ集約し、重複スレは整理する。",
-    "sourceUrl": "",
+    "sourceUrl": "https://elaws.e-gov.go.jp/document?lawid=323AC1000000194",
     "tags": [
       "政治資金",
       "献金",
@@ -19,7 +19,18 @@
     "pinned": true,
     "locked": false,
     "slowModeSeconds": 60,
-    "moderationNote": "継続炎上テーマのため slow mode 60 秒。"
+    "moderationNote": "継続炎上テーマのため slow mode 60 秒。",
+    "targetType": "policy",
+    "targetId": "political-funds-control-act",
+    "targetLabel": "政治資金規正法",
+    "reactions": {
+      "agree": 2,
+      "oppose": 1,
+      "source": 2,
+      "important": 4,
+      "impact": 1,
+      "angry": 5
+    }
   },
   {
     "id": "tax-001",
@@ -28,7 +39,7 @@
     "title": "消費税減税をやるなら何を削るべきか",
     "summary": "減税賛成/反対ではなく、財源と対象期間と受益層の線引きを先に決めるための議論。",
     "body": "恒久減税、時限減税、給付、社会保険料軽減のどれが実際に家計へ効くのか。誰が得して誰が漏れるのかを、感情ではなく設計で話す。",
-    "sourceUrl": "",
+    "sourceUrl": "https://www.mof.go.jp/tax_policy/summary/consumption/index.htm",
     "tags": [
       "減税",
       "消費税",
@@ -41,7 +52,18 @@
     "pinned": false,
     "locked": false,
     "slowModeSeconds": 0,
-    "moderationNote": "未設定"
+    "moderationNote": "未設定",
+    "targetType": "policy",
+    "targetId": "consumption-tax",
+    "targetLabel": "消費税",
+    "reactions": {
+      "agree": 3,
+      "oppose": 2,
+      "source": 1,
+      "important": 4,
+      "impact": 6,
+      "angry": 2
+    }
   },
   {
     "id": "prices-001",
@@ -50,7 +72,7 @@
     "title": "物価高なのに賃上げ実感が弱い理由を分解する",
     "summary": "名目賃金のニュースと生活実感が噛み合わない理由を、固定費、食料、雇用形態で分ける。",
     "body": "統計の平均だけでなく、中小企業、非正規、住居費の違いまで見ないと生活感覚は拾えない。家計簿ベースの実感を書いてもいいが、どの費目が効いているかは明記する。",
-    "sourceUrl": "",
+    "sourceUrl": "https://www.stat.go.jp/data/cpi/",
     "tags": [
       "物価高",
       "実質賃金",
@@ -63,7 +85,18 @@
     "pinned": false,
     "locked": false,
     "slowModeSeconds": 0,
-    "moderationNote": "未設定"
+    "moderationNote": "未設定",
+    "targetType": "economy",
+    "targetId": "consumer-prices",
+    "targetLabel": "消費者物価",
+    "reactions": {
+      "agree": 4,
+      "oppose": 0,
+      "source": 1,
+      "important": 3,
+      "impact": 7,
+      "angry": 3
+    }
   },
   {
     "id": "boj-mega",
@@ -72,7 +105,7 @@
     "title": "円安・日銀・株価の因果を追うメガスレ",
     "summary": "円安、利上げ観測、輸入物価、株価の動きを1本で追う定点スレ。単発相場実況はここへ寄せる。",
     "body": "為替だけ、株だけ、日銀だけに切らず、家計、企業、投資家の3方向で議論する。短時間の連投で相場実況化しやすいので slow mode を入れる。",
-    "sourceUrl": "",
+    "sourceUrl": "https://www.boj.or.jp/mopo/index.htm",
     "tags": [
       "円安",
       "日銀",
@@ -86,7 +119,18 @@
     "pinned": true,
     "locked": false,
     "slowModeSeconds": 45,
-    "moderationNote": "実況化しやすいので slow mode 45 秒。"
+    "moderationNote": "実況化しやすいので slow mode 45 秒。",
+    "targetType": "economy",
+    "targetId": "monetary-policy",
+    "targetLabel": "金融政策",
+    "reactions": {
+      "agree": 2,
+      "oppose": 2,
+      "source": 2,
+      "important": 5,
+      "impact": 4,
+      "angry": 1
+    }
   },
   {
     "id": "security-001",
@@ -95,7 +139,7 @@
     "title": "防衛費増額は家計負担と両立するのか",
     "summary": "安全保障の必要性は前提にした上で、税、国債、歳出削減のどこで賄うのかを議論する。",
     "body": "外交・安全保障は陣営論に流れやすい。だから費用負担、時間軸、エネルギー価格への波及までセットで話す。人格攻撃や国籍ヘイトは即通報対象。",
-    "sourceUrl": "",
+    "sourceUrl": "https://www.mod.go.jp/j/policy/agenda/guideline/",
     "tags": [
       "防衛費",
       "安全保障",
@@ -108,7 +152,18 @@
     "pinned": false,
     "locked": false,
     "slowModeSeconds": 30,
-    "moderationNote": "過熱しやすいので slow mode 30 秒。"
+    "moderationNote": "過熱しやすいので slow mode 30 秒。",
+    "targetType": "policy",
+    "targetId": "defense-spending",
+    "targetLabel": "防衛費",
+    "reactions": {
+      "agree": 2,
+      "oppose": 3,
+      "source": 3,
+      "important": 4,
+      "impact": 2,
+      "angry": 2
+    }
   },
   {
     "id": "election-001",
@@ -117,7 +172,7 @@
     "title": "次の参院選で本当に効く争点は何か",
     "summary": "支持率だけでなく、物価、政治資金、候補者の地盤、無党派の動きで争点を整理する。",
     "body": "政党支持の表明だけではなく、どの争点がどの選挙区で効くのかを書いていく。候補者個人の情報は公知の範囲に限定し、私人情報は不可。",
-    "sourceUrl": "",
+    "sourceUrl": "https://www.soumu.go.jp/senkyo/senkyo_s/index.html",
     "tags": [
       "選挙",
       "支持率",
@@ -130,6 +185,83 @@
     "pinned": false,
     "locked": false,
     "slowModeSeconds": 0,
-    "moderationNote": "未設定"
+    "moderationNote": "未設定",
+    "targetType": "policy",
+    "targetId": "national-election",
+    "targetLabel": "国政選挙",
+    "reactions": {
+      "agree": 1,
+      "oppose": 1,
+      "source": 2,
+      "important": 5,
+      "impact": 2,
+      "angry": 1
+    }
+  },
+  {
+    "id": "takaichi-policy-001",
+    "room": "election",
+    "author": "政策ウォッチ",
+    "title": "高市早苗議員の施政方針、家計に効く部分を読む",
+    "summary": "施政方針演説に含まれる経済、物価、社会保障の方針を一次資料から読み、生活への影響を分けて考える。",
+    "body": "人物への好き嫌いだけで終わらせず、施政方針演説のどの記述が家計、雇用、税負担にどう効くのかを追う。主張を断定するときは該当箇所を示す。",
+    "sourceUrl": "https://www.kantei.go.jp/jp/105/statement/2026/0220shiseihoshin.html",
+    "tags": [
+      "高市早苗",
+      "施政方針",
+      "経済政策"
+    ],
+    "targetType": "politician",
+    "targetId": "takaichi-sanae",
+    "targetLabel": "高市 早苗",
+    "reactions": {
+      "agree": 2,
+      "oppose": 3,
+      "source": 1,
+      "important": 5,
+      "impact": 4,
+      "angry": 1
+    },
+    "createdAt": "2026-07-10T05:56:54.167Z",
+    "updatedAt": "2026-07-10T08:44:54.167Z",
+    "lastCommentAt": "2026-07-10T08:44:54.167Z",
+    "megathread": false,
+    "pinned": false,
+    "locked": false,
+    "slowModeSeconds": 30,
+    "moderationNote": "人物論に流れやすいため slow mode 30 秒。"
+  },
+  {
+    "id": "tamaki-session-001",
+    "room": "tax",
+    "author": "国会ログ",
+    "title": "玉木雄一郎議員の代表質問、負担軽減策を検証する",
+    "summary": "本会議の代表質問を入口に、税と社会保険の負担軽減策が誰にどこまで届くのかを検証する。",
+    "body": "会議録の発言を起点に、賛否だけでなく対象者、財源、実施時期を確認する。切り抜きではなく前後の文脈も参照する。",
+    "sourceUrl": "https://www.shugiin.go.jp/internet/itdb_kaigiroku.nsf/html/kaigiroku/000122120260225004.htm",
+    "tags": [
+      "玉木雄一郎",
+      "代表質問",
+      "負担軽減"
+    ],
+    "targetType": "politician",
+    "targetId": "tamaki-yuichiro",
+    "targetLabel": "玉木 雄一郎",
+    "reactions": {
+      "agree": 4,
+      "oppose": 2,
+      "source": 1,
+      "important": 4,
+      "impact": 5,
+      "angry": 1
+    },
+    "createdAt": "2026-07-10T04:56:54.167Z",
+    "updatedAt": "2026-07-10T07:56:54.167Z",
+    "lastCommentAt": "2026-07-10T07:56:54.167Z",
+    "megathread": false,
+    "pinned": false,
+    "locked": false,
+    "slowModeSeconds": 15,
+    "moderationNote": "議論速度を整えるため slow mode 15 秒。"
   }
 ]

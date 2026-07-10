@@ -1,0 +1,74 @@
+[
+  {
+    "id": "takaichi-sanae",
+    "name": "高市 早苗",
+    "nameKana": "たかいち さなえ",
+    "chamber": "衆議院",
+    "group": "自由民主党",
+    "groupShort": "自民",
+    "district": "奈良2区",
+    "sourceAsOf": "2026-02-18",
+    "verifiedAt": "2026-07-10",
+    "sourceUrl": "https://www.shugiin.go.jp/internet/itdb_annai.nsf/html/statics/syu/4giin.htm"
+  },
+  {
+    "id": "tamaki-yuichiro",
+    "name": "玉木 雄一郎",
+    "nameKana": "たまき ゆういちろう",
+    "chamber": "衆議院",
+    "group": "国民民主党",
+    "groupShort": "国民",
+    "district": "香川2区",
+    "sourceAsOf": "2026-02-18",
+    "verifiedAt": "2026-07-10",
+    "sourceUrl": "https://www.shugiin.go.jp/internet/itdb_annai.nsf/html/statics/syu/4giin.htm"
+  },
+  {
+    "id": "noda-yoshihiko",
+    "name": "野田 佳彦",
+    "nameKana": "のだ よしひこ",
+    "chamber": "衆議院",
+    "group": "中道改革連合",
+    "groupShort": "中道",
+    "district": "千葉14区",
+    "sourceAsOf": "2026-02-18",
+    "verifiedAt": "2026-07-10",
+    "sourceUrl": "https://www.shugiin.go.jp/internet/itdb_annai.nsf/html/statics/syu/5giin.htm"
+  },
+  {
+    "id": "tamura-tomoko",
+    "name": "田村 智子",
+    "nameKana": "たむら ともこ",
+    "chamber": "衆議院",
+    "group": "日本共産党",
+    "groupShort": "共産",
+    "district": "比例東京",
+    "sourceAsOf": "2026-02-18",
+    "verifiedAt": "2026-07-10",
+    "sourceUrl": "https://www.shugiin.go.jp/internet/itdb_annai.nsf/html/statics/syu/4giin.htm"
+  },
+  {
+    "id": "onoda-kimi",
+    "name": "小野田 紀美",
+    "nameKana": "おのだ きみ",
+    "chamber": "参議院",
+    "group": "自由民主党・無所属の会",
+    "groupShort": "自民",
+    "district": "岡山県選挙区",
+    "sourceAsOf": "2026-07-07",
+    "verifiedAt": "2026-07-10",
+    "sourceUrl": "https://www.sangiin.go.jp/japanese/joho1/kousei/giin/profile/7016013.htm"
+  },
+  {
+    "id": "renho",
+    "name": "蓮舫",
+    "nameKana": "れんほう",
+    "chamber": "参議院",
+    "group": "立憲民主・無所属",
+    "groupShort": "立憲",
+    "district": "比例代表",
+    "sourceAsOf": "2026-07-07",
+    "verifiedAt": "2026-07-10",
+    "sourceUrl": "https://www.sangiin.go.jp/japanese/joho1/kousei/giin/profile/7004060.htm"
+  }
+]

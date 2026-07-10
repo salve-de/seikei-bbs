@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>モデレーション | 政経フォーラム</title>
-    <meta name="description" content="通報キュー" />
+    <title>議員から探す | 政経フォーラム</title>
+    <meta name="description" content="議員に紐づく政治経済の議論を探す" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
@@ -18,37 +18,41 @@
               <strong>政経フォーラム</strong>
             </span>
           </a>
-
           <nav class="primary-nav" aria-label="主要ページ">
             <a class="nav-link" href="/">今日の争点</a>
-            <a class="nav-link" href="/politicians">議員</a>
+            <a class="nav-link is-active" href="/politicians">議員</a>
             <a class="nav-link" href="/new">新規スレ</a>
-            <a class="nav-link is-active" href="/moderation">モデレーション</a>
+            <a class="nav-link" href="/moderation">モデレーション</a>
           </nav>
         </div>
-
         <div id="roomTabs" class="room-strip" aria-label="部屋一覧"></div>
       </header>
 
       <main class="page">
-        <section class="panel">
-          <div class="section-head">
-            <h1>モデレーション</h1>
+        <section class="directory-head">
+          <div>
+            <p class="eyebrow">People in the Diet</p>
+            <h1>議員から探す</h1>
           </div>
-          <div id="moderationSummary" class="meta-strip"></div>
+          <div class="directory-tools">
+            <label class="field search-field">
+              <span>氏名・会派・選挙区</span>
+              <input id="politicianSearch" type="search" autocomplete="off" />
+            </label>
+            <span id="politicianCount" class="count-label">0人</span>
+          </div>
         </section>
 
-        <section class="panel">
-          <div class="section-head">
-            <h2>通報</h2>
-            <span id="queueCount" class="count-label">0</span>
-          </div>
-          <div id="moderationQueue" class="flat-list"></div>
-        </section>
+        <div id="politicianGrid" class="politician-grid"></div>
+
+        <p class="data-note">
+          <span id="politicianVerifiedAt"></span>
+          <span>公式の衆議院・参議院情報を出典として表示</span>
+        </p>
       </main>
     </div>
 
     <script src="/shared.js"></script>
-    <script src="/moderation.js"></script>
+    <script src="/politicians.js"></script>
   </body>
 </html>

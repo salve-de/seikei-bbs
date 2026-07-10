@@ -58,6 +58,18 @@
     }).format(new Date(value));
   }
 
+  function formatDate(value) {
+    if (!value) {
+      return "-";
+    }
+
+    return new Intl.DateTimeFormat("ja-JP", {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    }).format(new Date(`${value}T00:00:00+09:00`));
+  }
+
   function parseCooldown(error) {
     if (error.message.includes("cooldown")) {
       return "連投制限中です。";
@@ -73,6 +85,22 @@
 
     if (error.message === "room_not_found") {
       return "部屋が見つかりません。";
+    }
+
+    if (error.message === "politician_not_found") {
+      return "議員が見つかりません。";
+    }
+
+    if (error.message === "invalid_source_url") {
+      return "有効な http または https の出典URLを入力してください。";
+    }
+
+    if (error.message === "invalid_thread_target") {
+      return "話題の対象を入力してください。";
+    }
+
+    if (error.message === "invalid_reaction") {
+      return "リアクションを選び直してください。";
     }
 
     return error.message;
@@ -116,6 +144,15 @@
       .join("");
   }
 
+  function renderTarget(target) {
+    if (!target?.label) {
+      return "";
+    }
+
+    const content = `${escapeHtml(target.typeLabel)}: ${escapeHtml(target.label)}`;
+    return `<span class="target-chip">${content}</span>`;
+  }
+
   function renderThreadRows(threads, rooms, options = {}) {
     const { showRoom = false, emptyMessage = "項目がありません。" } = options;
 
@@ -144,11 +181,11 @@
               <a class="flat-table-row thread-row" href="/thread/${thread.id}">
                 <div class="thread-main">
                   <strong>${escapeHtml(thread.title)}</strong>
-                  <div class="inline-row">${renderBadges(thread)} ${renderTags(thread.tags)}</div>
+                  <div class="inline-row">${renderBadges(thread)} ${renderTarget(thread.target)} ${renderTags(thread.tags)}</div>
                 </div>
                 <div>${middleValue}</div>
                 <div class="numeric-cell">${numberFormat.format(thread.heat || 0)}</div>
-                <div class="numeric-cell">${numberFormat.format(thread.commentCount || 0)}</div>
+                <div class="numeric-cell">${numberFormat.format(thread.commentCount || 0)}<span class="reaction-mini"> / ${numberFormat.format(thread.reactionTotal || 0)}</span></div>
                 <div class="numeric-cell">${escapeHtml(relativeTime(thread.lastActivityAt || thread.createdAt))}</div>
               </a>
             `;
@@ -180,12 +217,14 @@
     requestJson,
     relativeTime,
     formatTimestamp,
+    formatDate,
     parseCooldown,
     numberFormat,
     roomLabel,
     renderRoomTabs,
     renderBadges,
     renderTags,
+    renderTarget,
     renderThreadRows,
     setFeedback,
   };

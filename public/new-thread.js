@@ -9,6 +9,8 @@ const {
 
 const url = new URL(window.location.href);
 const requestedRoom = url.searchParams.get("room") || "";
+const requestedTargetType = url.searchParams.get("targetType") || "";
+const requestedTargetId = url.searchParams.get("targetId") || "";
 
 const state = {
   board: null,
@@ -19,6 +21,11 @@ const elements = {
   composerForm: document.getElementById("composerForm"),
   composerRoom: document.getElementById("composerRoom"),
   composerAuthor: document.getElementById("composerAuthor"),
+  composerTargetType: document.getElementById("composerTargetType"),
+  composerTargetId: document.getElementById("composerTargetId"),
+  composerTargetLabel: document.getElementById("composerTargetLabel"),
+  composerPoliticianField: document.getElementById("composerPoliticianField"),
+  composerTargetLabelField: document.getElementById("composerTargetLabelField"),
   composerTitle: document.getElementById("composerTitle"),
   composerSummary: document.getElementById("composerSummary"),
   composerBody: document.getElementById("composerBody"),
@@ -42,6 +49,37 @@ function populateRooms() {
   if (requestedRoom && state.board.rooms.some((room) => room.id === requestedRoom)) {
     elements.composerRoom.value = requestedRoom;
   }
+}
+
+function populateTargets() {
+  elements.composerTargetType.innerHTML = state.board.targetDefinitions
+    .map((target) => `<option value="${target.id}">${escapeHtml(target.label)}</option>`)
+    .join("");
+  elements.composerTargetId.innerHTML = state.board.politicians
+    .map(
+      (politician) =>
+        `<option value="${politician.id}">${escapeHtml(politician.name)} / ${escapeHtml(
+          politician.groupShort
+        )} / ${escapeHtml(politician.district)}</option>`
+    )
+    .join("");
+
+  if (state.board.targetDefinitions.some((target) => target.id === requestedTargetType)) {
+    elements.composerTargetType.value = requestedTargetType;
+  }
+  if (state.board.politicians.some((politician) => politician.id === requestedTargetId)) {
+    elements.composerTargetId.value = requestedTargetId;
+  }
+  updateTargetFields();
+}
+
+function updateTargetFields() {
+  const politicianSelected = elements.composerTargetType.value === "politician";
+  elements.composerPoliticianField.hidden = !politicianSelected;
+  elements.composerTargetLabelField.hidden = politicianSelected;
+  elements.composerTargetId.disabled = !politicianSelected;
+  elements.composerTargetLabel.disabled = politicianSelected;
+  elements.composerTargetLabel.required = !politicianSelected;
 }
 
 function duplicateCandidates() {
@@ -106,6 +144,9 @@ async function submitThread(event) {
         body: elements.composerBody.value,
         tags: elements.composerTags.value,
         sourceUrl: elements.composerSourceUrl.value,
+        targetType: elements.composerTargetType.value,
+        targetId: elements.composerTargetId.value,
+        targetLabel: elements.composerTargetLabel.value,
         megathread: elements.composerMegathread.checked,
       }),
     });
@@ -122,6 +163,7 @@ function bindEvents() {
     renderRoomTabs(elements.roomTabs, state.board.rooms, currentRoomId());
     renderDuplicates();
   });
+  elements.composerTargetType.addEventListener("change", updateTargetFields);
   elements.composerTitle.addEventListener("input", renderDuplicates);
   elements.composerSummary.addEventListener("input", renderDuplicates);
 }
@@ -129,6 +171,7 @@ function bindEvents() {
 async function initialize() {
   state.board = await requestJson("/api/board");
   populateRooms();
+  populateTargets();
   renderRoomTabs(elements.roomTabs, state.board.rooms, currentRoomId());
   renderDuplicates();
   bindEvents();

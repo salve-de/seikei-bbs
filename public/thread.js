@@ -6,6 +6,7 @@ const {
   renderRoomTabs,
   renderBadges,
   renderTags,
+  renderTarget,
   setFeedback,
   parseCooldown,
 } = window.BoardShared;
@@ -26,7 +27,11 @@ const elements = {
   reportThreadButton: document.getElementById("reportThreadButton"),
   threadMeta: document.getElementById("threadMeta"),
   threadBadges: document.getElementById("threadBadges"),
+  threadSource: document.getElementById("threadSource"),
   threadBodyContent: document.getElementById("threadBodyContent"),
+  reactionBar: document.getElementById("reactionBar"),
+  reactionTotal: document.getElementById("reactionTotal"),
+  reactionFeedback: document.getElementById("reactionFeedback"),
   commentMeta: document.getElementById("commentMeta"),
   commentForm: document.getElementById("commentForm"),
   commentAuthor: document.getElementById("commentAuthor"),
@@ -51,6 +56,8 @@ function renderNotFound(message = "スレッドが見つかりません。") {
   elements.threadBreadcrumb.innerHTML = "";
   elements.threadMeta.innerHTML = "";
   elements.threadBadges.innerHTML = "";
+  elements.threadSource.innerHTML = "";
+  elements.reactionBar.innerHTML = "";
   elements.threadBodyContent.innerHTML = `<p class="empty-state">${escapeHtml(message)}</p>`;
   elements.commentList.innerHTML = "";
   elements.relatedSection.hidden = true;
@@ -81,9 +88,11 @@ function renderThread() {
     <span>投稿者 <strong>${escapeHtml(thread.author)}</strong></span>
     <span>レス <strong>${numberFormat.format(thread.commentCount)}</strong></span>
     <span>更新 <strong>${escapeHtml(relativeTime(thread.lastActivityAt || thread.createdAt))}</strong></span>
-    ${thread.sourceUrl ? `<a class="button button-muted button-link" href="${escapeHtml(thread.sourceUrl)}" target="_blank" rel="noreferrer">URL</a>` : ""}
   `;
-  elements.threadBadges.innerHTML = `${renderBadges(thread)} ${renderTags(thread.tags)}`;
+  elements.threadBadges.innerHTML = `${renderBadges(thread)} ${renderTarget(thread.target)} ${renderTags(
+    thread.tags
+  )}`;
+  renderSource(thread);
   elements.threadBodyContent.innerHTML = thread.body
     .split("\n")
     .filter(Boolean)
@@ -92,6 +101,84 @@ function renderThread() {
 
   elements.commentBody.disabled = Boolean(thread.locked);
   elements.commentSubmit.disabled = Boolean(thread.locked);
+}
+
+function renderSource(thread) {
+  const target = thread.target;
+  let hostname = "出典";
+
+  try {
+    hostname = new URL(thread.sourceUrl).hostname.replace(/^www\./, "");
+  } catch {
+    // Older local threads can exist without a source URL.
+  }
+
+  elements.threadSource.innerHTML = `
+    <div class="source-copy">
+      <span class="eyebrow">Source & target</span>
+      <strong>${target ? `${escapeHtml(target.typeLabel)}: ${escapeHtml(target.label)}` : "対象未登録"}</strong>
+      <span>${thread.sourceUrl ? escapeHtml(hostname) : "出典未登録"}</span>
+    </div>
+    <div class="button-row">
+      ${
+        target?.href
+          ? `<a class="button button-muted" href="${escapeHtml(target.href)}">対象ページ</a>`
+          : ""
+      }
+      ${
+        thread.sourceUrl
+          ? `<a class="button button-primary" href="${escapeHtml(
+              thread.sourceUrl
+            )}" target="_blank" rel="noreferrer">一次情報を開く</a>`
+          : ""
+      }
+    </div>
+  `;
+}
+
+function renderReactions() {
+  const thread = state.detail?.thread;
+  if (!thread) {
+    elements.reactionBar.innerHTML = "";
+    return;
+  }
+
+  elements.reactionTotal.textContent = `${numberFormat.format(thread.reactionTotal || 0)}件`;
+  elements.reactionBar.innerHTML = (thread.reactions || [])
+    .map(
+      (reaction) => `
+        <button class="reaction-button" type="button" data-reaction="${escapeHtml(
+          reaction.id
+        )}" data-tone="${escapeHtml(reaction.tone)}">
+          <span>${escapeHtml(reaction.label)}</span>
+          <strong>${numberFormat.format(reaction.count)}</strong>
+        </button>
+      `
+    )
+    .join("");
+
+  for (const button of elements.reactionBar.querySelectorAll("[data-reaction]")) {
+    button.addEventListener("click", () => submitReaction(button));
+  }
+}
+
+async function submitReaction(button) {
+  setFeedback(elements.reactionFeedback, "");
+  button.disabled = true;
+
+  try {
+    const payload = await requestJson(`/api/threads/${threadId}/reactions`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ reaction: button.dataset.reaction }),
+    });
+    state.detail.thread = payload.thread;
+    renderReactions();
+    setFeedback(elements.reactionFeedback, "反応を記録しました。", "success");
+  } catch (error) {
+    button.disabled = false;
+    setFeedback(elements.reactionFeedback, parseCooldown(error));
+  }
 }
 
 function renderComments() {
@@ -177,6 +264,7 @@ async function loadPage() {
   state.board = board;
   state.detail = detail;
   renderThread();
+  renderReactions();
   renderComments();
   renderRelatedThreads();
 }
@@ -184,6 +272,7 @@ async function loadPage() {
 async function refreshThread() {
   state.detail = await requestJson(`/api/threads/${threadId}`);
   renderThread();
+  renderReactions();
   renderComments();
   renderRelatedThreads();
 }

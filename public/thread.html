@@ -20,7 +20,8 @@
           </a>
 
           <nav class="primary-nav" aria-label="主要ページ">
-            <a class="nav-link" href="/">ホーム</a>
+            <a class="nav-link" href="/">今日の争点</a>
+            <a class="nav-link" href="/politicians">議員</a>
             <a class="nav-link" href="/new">新規スレ</a>
             <a class="nav-link" href="/moderation">モデレーション</a>
           </nav>
@@ -42,7 +43,17 @@
           </div>
           <div id="threadMeta" class="meta-strip"></div>
           <div id="threadBadges" class="tag-row"></div>
+          <div id="threadSource" class="source-block"></div>
           <div id="threadBodyContent" class="prose-block"></div>
+        </section>
+
+        <section class="panel">
+          <div class="section-head">
+            <h2>この話をどう感じた？</h2>
+            <span id="reactionTotal" class="count-label">0</span>
+          </div>
+          <div id="reactionBar" class="reaction-bar"></div>
+          <p id="reactionFeedback" class="form-feedback" hidden></p>
         </section>
 
         <section class="panel">

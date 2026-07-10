@@ -20,7 +20,8 @@
           </a>
 
           <nav class="primary-nav" aria-label="主要ページ">
-            <a class="nav-link" href="/">ホーム</a>
+            <a class="nav-link" href="/">今日の争点</a>
+            <a class="nav-link" href="/politicians">議員</a>
             <a class="nav-link is-active" href="/new">新規スレ</a>
             <a class="nav-link" href="/moderation">モデレーション</a>
           </nav>
@@ -47,6 +48,21 @@
                 <input id="composerAuthor" type="text" maxlength="32" placeholder="名無しさん" />
               </label>
 
+              <label class="field">
+                <span>対象</span>
+                <select id="composerTargetType"></select>
+              </label>
+
+              <label id="composerPoliticianField" class="field">
+                <span>議員</span>
+                <select id="composerTargetId"></select>
+              </label>
+
+              <label id="composerTargetLabelField" class="field field-full">
+                <span>政策・政党・地域・指標名</span>
+                <input id="composerTargetLabel" type="text" maxlength="60" />
+              </label>
+
               <label class="field field-full">
                 <span>スレタイ</span>
                 <input id="composerTitle" type="text" maxlength="120" />
@@ -68,8 +84,8 @@
               </label>
 
               <label class="field">
-                <span>URL</span>
-                <input id="composerSourceUrl" type="url" />
+                <span>一次情報・ニュースのURL</span>
+                <input id="composerSourceUrl" type="url" required />
               </label>
 
               <label class="checkbox-line field-full">
