@@ -107,15 +107,15 @@
     }
 
     if (error.message === "fact_requires_source") {
-      return "事実・データとして投稿する場合は、確認できる出典URLが必要です。";
+      return "入力内容を確認してください。";
     }
 
     if (error.message === "invalid_impact_areas") {
-      return "生活への影響を1〜3個選んでください。";
+      return "選択内容を確認してください。";
     }
 
     if (error.message === "invalid_decision_prompt") {
-      return "みんなに判断してほしい問いを、もう少し具体的に書いてください。";
+      return "入力内容を確認してください。";
     }
 
     return error.message;
@@ -130,13 +130,24 @@
       return;
     }
 
-    container.innerHTML = [
-      `<a class="room-tab${activeRoomId ? "" : " is-active"}" href="/">全体</a>`,
-      ...rooms.map((room) => {
-        const active = room.id === activeRoomId ? " is-active" : "";
-        return `<a class="room-tab${active}" href="/room/${room.id}">${escapeHtml(room.label)}</a>`;
-      }),
-    ].join("");
+    const politicsRooms = new Set(["money", "security", "election"]);
+    const economyRooms = new Set(["tax", "prices", "boj"]);
+    const activeBoard = ["politics", "economy", "live"].includes(activeRoomId)
+      ? activeRoomId
+      : politicsRooms.has(activeRoomId)
+        ? "politics"
+        : economyRooms.has(activeRoomId)
+          ? "economy"
+          : "all";
+    const boards = [
+      { id: "all", label: "全体", href: "/" },
+      { id: "politics", label: "政治総合", href: "/?board=politics" },
+      { id: "economy", label: "生活と経済", href: "/?board=economy" },
+      { id: "live", label: "実況・速報", href: "/?board=live" },
+    ];
+    container.innerHTML = boards.map((board) =>
+      `<a class="room-tab${activeBoard === board.id ? " is-active" : ""}" href="${board.href}">${board.label}</a>`
+    ).join("");
   }
 
   function renderBadges(thread) {
@@ -182,9 +193,9 @@
         <div class="flat-table-head">
           <span>スレ</span>
           <span>${middleLabel}</span>
-          <span>整理度</span>
+          <span>勢い</span>
           <span>レス</span>
-          <span>根拠</span>
+          <span>更新</span>
         </div>
         ${threads
           .map((thread) => {
@@ -199,9 +210,9 @@
                   <div class="inline-row">${renderBadges(thread)} ${renderTarget(thread.target)} ${renderTags(thread.tags)}</div>
                 </div>
                 <div>${middleValue}</div>
-                <div class="numeric-cell">${numberFormat.format(thread.value || 0)}</div>
+                <div class="numeric-cell">${numberFormat.format(thread.heat || 0)}</div>
                 <div class="numeric-cell">${numberFormat.format(thread.commentCount || 0)}</div>
-                <div class="numeric-cell">${numberFormat.format(thread.evidenceRate || 0)}%</div>
+                <div class="numeric-cell">${escapeHtml(relativeTime(thread.lastActivityAt))}</div>
               </a>
             `;
           })

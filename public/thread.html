@@ -2,22 +2,22 @@
 <html lang="ja">
   <head>
     <meta charset="UTF-8" /><meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>論点 | 政経フォーラム</title><link rel="stylesheet" href="/styles.css" />
+    <title>スレッド | 政経板</title><link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
     <div class="app-shell">
-      <header class="site-header"><div class="site-header-main"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><span class="brand-kicker">Political Economy Forum</span><strong>政経フォーラム</strong></span></a><nav class="primary-nav"><a class="nav-link" href="/">掲示板</a><a class="nav-link" href="/politicians">議員</a><a class="nav-link" href="/new">スレを立てる</a></nav></div><div id="roomTabs" class="room-strip"></div></header>
+      <header class="site-header"><div class="site-header-main"><a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>政経板</strong></span></a><nav class="primary-nav"><a class="nav-link" href="/">掲示板</a><a class="nav-link" href="/politicians">議員</a><a class="nav-link" href="/new">スレを立てる</a></nav></div><div id="roomTabs" class="room-strip"></div></header>
       <main class="page thread-page">
         <nav id="threadBreadcrumb" class="breadcrumb"></nav>
         <article class="thread-lead">
           <div class="thread-lead-main"><div id="threadBadges" class="inline-row"></div><h1 id="threadTitle">論点</h1><p id="threadSummary"></p><div id="threadMeta" class="meta-strip"></div></div>
           <div class="thread-lead-actions"><button id="watchButton" class="watch-button watch-button-large" type="button" title="あとで追う" aria-label="あとで追う">☆</button><button id="reportThreadButton" class="button button-muted" type="button">通報</button></div>
         </article>
-        <section id="threadSource" class="source-block"></section>
+        <details class="fuel-details"><summary>元ネタ・資料を見る</summary><section id="threadSource" class="source-block"></section></details>
 
         <div class="conversation-layout">
           <section class="conversation-panel">
-            <div class="conversation-head"><div><p class="eyebrow">Live thread</p><h2>この話題の会話</h2></div><span id="discussionSummary" class="conversation-count"></span></div>
+            <div class="conversation-head"><div><p class="eyebrow">レス</p><h2 id="conversationTitle">このスレの会話</h2></div><span id="discussionSummary" class="conversation-count"></span></div>
             <div id="conversationFilter" class="conversation-filter"></div>
             <div id="commentList" class="comment-list"></div>
           </section>

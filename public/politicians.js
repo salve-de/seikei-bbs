@@ -2,7 +2,6 @@ const {
   escapeHtml,
   requestJson,
   numberFormat,
-  formatDate,
   renderRoomTabs,
 } = window.BoardShared;
 
@@ -16,7 +15,6 @@ const elements = {
   politicianSearch: document.getElementById("politicianSearch"),
   politicianCount: document.getElementById("politicianCount"),
   politicianGrid: document.getElementById("politicianGrid"),
-  politicianVerifiedAt: document.getElementById("politicianVerifiedAt"),
 };
 
 function filteredPoliticians() {
@@ -70,7 +68,7 @@ function renderPoliticians() {
           <div class="politician-card-stats">
             <span><strong>${numberFormat.format(politician.threadCount)}</strong> スレ</span>
             <span><strong>${numberFormat.format(politician.commentCount)}</strong> レス</span>
-            <span><strong>${numberFormat.format(politician.reactionCount)}</strong> 感情</span>
+            <span><strong>${numberFormat.format(politician.reactionCount)}</strong> 反応</span>
           </div>
         </article>
       `
@@ -82,7 +80,6 @@ async function initialize() {
   const payload = await requestJson("/api/politicians");
   state.politicians = payload.politicians || [];
   renderRoomTabs(elements.roomTabs, payload.rooms, null);
-  elements.politicianVerifiedAt.textContent = `${formatDate(payload.meta.verifiedAt)}確認`;
   elements.politicianSearch.addEventListener("input", (event) => {
     state.query = event.target.value;
     renderPoliticians();

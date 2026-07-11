@@ -1485,6 +1485,7 @@ select:focus {
 }
 
 .board-intro h1 { margin: 0.2rem 0 0; font-size: 1.55rem; line-height: 1.4; }
+.board-intro p { margin: 0.35rem 0 0; color: var(--ink-soft); line-height: 1.6; }
 .board-switch { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line-strong); background: var(--surface); }
 .board-switch-button { display: grid; gap: 0.2rem; min-height: 4.2rem; padding: 0.65rem 0.75rem; border: 0; border-right: 1px solid var(--line); background: transparent; color: var(--ink); text-align: left; }
 .board-switch-button:last-child { border-right: 0; }
@@ -1515,10 +1516,13 @@ select:focus {
 .profile-details { border: 1px solid var(--line-strong); background: var(--surface); }
 .profile-details > summary { padding: 0.8rem 1rem; cursor: pointer; font-weight: 700; }
 .profile-details .politician-profile { border: 0; border-top: 1px solid var(--line); border-radius: 0; }
+.fuel-details { border: 1px solid var(--line-strong); background: var(--surface); }
+.fuel-details > summary { padding: 0.65rem 0.85rem; cursor: pointer; color: var(--ink-soft); font-size: 0.78rem; font-weight: 700; }
+.fuel-details .source-block { margin: 0; border: 0; border-top: 1px solid var(--line); border-radius: 0; }
 
 @media (max-width: 900px) {
   .conversation-layout { grid-template-columns: 1fr; }
-  .conversation-layout .discussion-composer { position: static; order: -1; }
+  .conversation-layout .discussion-composer { position: static; }
   .composer-body textarea { min-height: 8rem; }
   .forum-layout { grid-template-columns: 1fr; }
 }

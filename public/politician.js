@@ -33,7 +33,7 @@ function reactionTotals(threads, definitions) {
 }
 
 function renderProfile(politician) {
-  document.title = `${politician.name} | 政経フォーラム`;
+  document.title = `${politician.name} | 政経板`;
   elements.politicianBoardTitle.textContent = `${politician.name}について語る`;
   elements.politicianBoardMeta.textContent = `${politician.groupShort} · ${politician.district}`;
   elements.politicianNewThread.href = `/new?targetType=politician&targetId=${encodeURIComponent(politician.id)}`;

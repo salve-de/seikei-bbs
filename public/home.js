@@ -3,7 +3,8 @@ const {
   renderTarget, isWatched, readLocal,
 } = window.BoardShared;
 
-const state = { payload: null, tab: "hot", board: "all" };
+const requestedBoard = new URL(location.href).searchParams.get("board");
+const state = { payload: null, tab: "hot", board: ["politics", "economy", "live"].includes(requestedBoard) ? requestedBoard : "all" };
 const el = Object.fromEntries(["roomTabs", "boardSwitch", "feedTabs", "threadFeed", "featuredPoliticians", "roomDirectory", "homeCounts"].map((id) => [id, document.getElementById(id)]));
 const tabs = [
   { id: "hot", label: "勢い" },
@@ -30,8 +31,8 @@ function activeThreads() {
 }
 
 function renderSwitches() {
-  const boards = [{ id: "all", label: "全体", note: "すべての会話" }, ...state.payload.boards];
-  el.boardSwitch.innerHTML = boards.map((board) => `<button type="button" data-board="${board.id}" class="board-switch-button${state.board === board.id ? " is-active" : ""}"><strong>${escapeHtml(board.label)}</strong><span>${escapeHtml(board.note || "")}</span></button>`).join("");
+  const boards = [{ id: "all", label: "全体", threadCount: state.payload.meta.totalThreads }, ...state.payload.boards];
+  el.boardSwitch.innerHTML = boards.map((board) => `<button type="button" data-board="${board.id}" class="board-switch-button${state.board === board.id ? " is-active" : ""}"><strong>${escapeHtml(board.label)}</strong><span>${numberFormat.format(board.threadCount || 0)}スレ</span></button>`).join("");
   el.boardSwitch.querySelectorAll("[data-board]").forEach((button) => button.addEventListener("click", () => { state.board = button.dataset.board; renderSwitches(); renderFeed(); }));
   el.feedTabs.innerHTML = tabs.map((tab) => `<button type="button" data-tab="${tab.id}" class="segment${state.tab === tab.id ? " is-active" : ""}">${tab.label}</button>`).join("");
   el.feedTabs.querySelectorAll("[data-tab]").forEach((button) => button.addEventListener("click", () => { state.tab = button.dataset.tab; renderSwitches(); renderFeed(); }));
@@ -63,7 +64,7 @@ function renderPoliticians() {
 
 async function initialize() {
   state.payload = await requestJson("/api/home");
-  renderRoomTabs(el.roomTabs, state.payload.rooms, null);
+  renderRoomTabs(el.roomTabs, state.payload.rooms, state.board);
   renderSwitches();
   renderFeed();
   renderPoliticians();

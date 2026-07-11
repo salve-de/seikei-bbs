@@ -7,7 +7,7 @@ const threadId = decodeURIComponent(location.pathname.split("/").pop() || "");
 const state = { board: null, detail: null, reportTarget: null, replyTo: null, lastSeen: 0, filter: "mixed" };
 const impactLabels = { household: "家計", work: "仕事", region: "地域", future: "将来", rights: "権利・制度", security: "安全" };
 const sourceKindLabels = { official: "公的機関", news: "報道", analysis: "解説・分析", other: "その他" };
-const ids = ["roomTabs", "threadBreadcrumb", "threadBadges", "threadTitle", "threadSummary", "threadMeta", "watchButton", "reportThreadButton", "threadSource", "discussionSummary", "conversationFilter", "commentList", "commentForm", "commentStance", "commentClaimType", "commentImpacts", "commentAuthor", "commentBody", "commentSource", "commentSubmit", "commentFeedback", "replyContext", "relatedSection", "relatedThreads", "reportDialog", "reportForm", "reportTitle", "reporterName", "reportReason", "reportDetails", "reportFeedback", "closeReport"];
+const ids = ["roomTabs", "threadBreadcrumb", "threadBadges", "threadTitle", "threadSummary", "threadMeta", "watchButton", "reportThreadButton", "threadSource", "discussionSummary", "conversationTitle", "conversationFilter", "commentList", "commentForm", "commentStance", "commentClaimType", "commentImpacts", "commentAuthor", "commentBody", "commentSource", "commentSubmit", "commentFeedback", "replyContext", "relatedSection", "relatedThreads", "reportDialog", "reportForm", "reportTitle", "reporterName", "reportReason", "reportDetails", "reportFeedback", "closeReport"];
 const el = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)]));
 
 function label(definitions, id) {
@@ -23,8 +23,9 @@ function renderCommentBody(body) {
 function renderThread() {
   const { thread, room } = state.detail;
   renderRoomTabs(el.roomTabs, state.board.rooms, room.id);
-  el.threadBreadcrumb.innerHTML = `<a href="/">今日の争点</a><span>/</span><a href="/room/${room.id}">${escapeHtml(room.label)}</a>`;
+  el.threadBreadcrumb.innerHTML = `<a href="/">掲示板</a><span>/</span><a href="/room/${room.id}">${escapeHtml(room.label)}</a>`;
   el.threadTitle.textContent = thread.title;
+  el.conversationTitle.textContent = thread.title;
   el.threadSummary.textContent = thread.summary;
   const modeLabel = thread.mode === "same-side" ? "同じ側で話す" : thread.mode === "opposition-welcome" ? "反対意見歓迎" : "ごちゃ混ぜ";
   el.threadBadges.innerHTML = `${renderTarget(thread.target)} <span class="badge${thread.mode === "opposition-welcome" ? " badge-danger" : ""}">${modeLabel}</span> ${renderTags(thread.tags)}`;
@@ -79,8 +80,10 @@ async function submitCommentReaction(button) {
 }
 
 function renderConversationFilter(ownStance) {
-  const filters = [{ id: "mixed", label: "全部" }, { id: "same", label: ownStance ? "自分と同じ" : "同じ側" }, { id: "opposite", label: ownStance ? "自分と反対" : "反対側" }, { id: "unspoken", label: "未表明" }, { id: "exchange", label: "応酬" }];
-  el.conversationFilter.innerHTML = filters.map((filter) => `<button type="button" data-filter="${filter.id}" class="${state.filter === filter.id ? "is-active" : ""}"${!ownStance && ["same", "opposite"].includes(filter.id) ? " disabled" : ""}>${filter.label}</button>`).join("");
+  const filters = [{ id: "mixed", label: "全レス" }, { id: "exchange", label: "返信が続いているレス" }];
+  if (ownStance) filters.splice(1, 0, { id: "same", label: "自分と同じ側" }, { id: "opposite", label: "自分と反対側" }, { id: "unspoken", label: "立場なし" });
+  if (!filters.some((filter) => filter.id === state.filter)) state.filter = "mixed";
+  el.conversationFilter.innerHTML = filters.map((filter) => `<button type="button" data-filter="${filter.id}" class="${state.filter === filter.id ? "is-active" : ""}">${filter.label}</button>`).join("");
   el.conversationFilter.querySelectorAll("[data-filter]").forEach((button) => button.addEventListener("click", () => { state.filter = button.dataset.filter; renderComments(); }));
 }
 
