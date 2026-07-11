@@ -69,6 +69,25 @@ test("thread creation requires a safe source and a valid target", async () => {
   const payload = await response.json();
   assert.equal(payload.thread.target.label, "高市 早苗");
   assert.equal(payload.thread.sourceUrl, "https://www.shugiin.go.jp/");
+
+  const minimalResponse = await createThread({
+    author: "minimal-thread",
+    title: "減税って結局どうなの",
+    body: "率直な意見を聞きたい。",
+    summary: "",
+    decisionPrompt: "",
+    impactAreas: [],
+    tags: [],
+    sourceUrl: "",
+    sourceKind: "",
+    targetType: "",
+    targetId: "",
+  });
+  assert.equal(minimalResponse.status, 201);
+  const minimal = await minimalResponse.json();
+  assert.equal(minimal.thread.summary, "率直な意見を聞きたい。");
+  assert.equal(minimal.thread.sourceUrl, "");
+  assert.equal(minimal.thread.mode, "mixed");
 });
 
 test("reactions persist and enforce a per-type cooldown", async () => {
@@ -94,7 +113,7 @@ test("reactions persist and enforce a per-type cooldown", async () => {
   assert.equal((await secondResponse.json()).error, "reaction_cooldown");
 });
 
-test("a position is hidden-client compatible and structured comments require sources for facts", async () => {
+test("comments are body-first, numbered, and can reply by quote", async () => {
   const createdResponse = await createThread({ author: "structured-test" });
   const created = await createdResponse.json();
 
@@ -106,36 +125,72 @@ test("a position is hidden-client compatible and structured comments require sou
   assert.equal(positionResponse.status, 201);
   assert.equal((await positionResponse.json()).thread.positionTotal, 1);
 
-  const invalidComment = await fetch(`${baseUrl}/api/threads/${created.thread.id}/comments`, {
+  const firstCommentResponse = await fetch(`${baseUrl}/api/threads/${created.thread.id}/comments`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
       author: "検証者",
-      body: "これは事実として述べる投稿です。",
-      stance: "unsure",
-      claimType: "fact",
-      impactAreas: ["household"],
+      body: "出典や立場を選ばず、そのまま書き込めます。",
     }),
   });
-  assert.equal(invalidComment.status, 400);
-  assert.equal((await invalidComment.json()).error, "fact_requires_source");
+  assert.equal(firstCommentResponse.status, 201);
+  const firstPayload = await firstCommentResponse.json();
+  const firstComment = firstPayload.comments[0];
+  assert.equal(firstComment.number, 1);
+  assert.equal(firstComment.stance, "");
+  assert.equal(firstComment.claimType, "");
+  assert.deepEqual(firstComment.impactAreas, []);
+  assert.match(firstComment.displayId, /^[A-F0-9]{8}$/);
+  assert.equal("actorHash" in firstComment, false);
 
-  const commentResponse = await fetch(`${baseUrl}/api/threads/${created.thread.id}/comments`, {
+  const invalidReplyResponse = await fetch(`${baseUrl}/api/threads/${created.thread.id}/comments`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ author: "返信検証1", body: ">>1 返信します。", replyToId: "missing-comment" }),
+  });
+  assert.equal(invalidReplyResponse.status, 400);
+  assert.equal((await invalidReplyResponse.json()).error, "invalid_reply_target");
+
+  const replyResponse = await fetch(`${baseUrl}/api/threads/${created.thread.id}/comments`, {
     method: "POST",
     headers: { "content-type": "application/json" },
     body: JSON.stringify({
-      author: "検証者",
-      body: "公式資料の記述を根拠として確認します。",
-      stance: "unsure",
+      author: "返信検証2",
+      body: ">>1 その見方には反対です。",
+      replyToId: firstComment.id,
       claimType: "fact",
-      impactAreas: ["household"],
-      sourceUrl: "https://www.soumu.go.jp/",
     }),
   });
-  assert.equal(commentResponse.status, 201);
-  const comment = (await commentResponse.json()).comments[0];
-  assert.equal(comment.claimType, "fact");
-  assert.equal(comment.helpfulness.length, 3);
+  assert.equal(replyResponse.status, 201);
+  const replyPayload = await replyResponse.json();
+  const reply = replyPayload.comments.at(-1);
+  assert.equal(reply.number, 2);
+  assert.equal(reply.replyToId, firstComment.id);
+  assert.equal(reply.replyToNumber, 1);
+  assert.deepEqual(reply.quotedNumbers, [1]);
+  assert.equal(reply.claimType, "fact");
+  assert.equal(reply.sourceUrl, "");
+  assert.equal(replyPayload.thread.lastCommentNo, 2);
+  assert.equal(reply.displayId, firstComment.displayId);
+
+  const otherActorResponse = await fetch(`${baseUrl}/api/threads/${created.thread.id}/comments`, {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-board-actor": "different-session" },
+    body: JSON.stringify({ author: "別セッション", body: "別の匿名IDになります。" }),
+  });
+  assert.equal(otherActorResponse.status, 201);
+  const otherActor = (await otherActorResponse.json()).comments.at(-1);
+  assert.notEqual(otherActor.displayId, firstComment.displayId);
+  assert.equal("actorHash" in otherActor, false);
+
+  const reactionResponse = await fetch(`${baseUrl}/api/threads/${created.thread.id}/comments/${firstComment.id}/reactions`, {
+    method: "POST",
+    headers: { "content-type": "application/json", "x-board-actor": "reaction-session" },
+    body: JSON.stringify({ reaction: "source" }),
+  });
+  assert.equal(reactionResponse.status, 201);
+  const reacted = (await reactionResponse.json()).comments.find((comment) => comment.id === firstComment.id);
+  assert.equal(reacted.reactions.find((reaction) => reaction.id === "source").count, 1);
 });
 
 function createThread(overrides = {}) {

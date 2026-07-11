@@ -1,99 +1,74 @@
 const {
   escapeHtml, requestJson, numberFormat, relativeTime, roomLabel, renderRoomTabs,
-  renderThreadRows, renderTarget, isWatched, toggleWatch,
+  renderTarget, isWatched, readLocal,
 } = window.BoardShared;
 
-const impactLabels = { all: "すべて", household: "家計", work: "仕事", region: "地域", future: "将来", rights: "権利・制度", security: "安全" };
-const sourceKindLabels = { official: "公的資料", news: "報道", analysis: "分析", other: "出典あり" };
-const state = { payload: null, impact: "all" };
-const elements = Object.fromEntries([
-  "roomTabs", "impactFilter", "issueHeading", "dailyIssueGrid", "watchSection", "watchCount",
-  "watchedThreads", "groundedThreads", "featuredPoliticians", "roomDirectory", "homeCounts",
-].map((id) => [id, document.getElementById(id)]));
+const state = { payload: null, tab: "hot", board: "all" };
+const el = Object.fromEntries(["roomTabs", "boardSwitch", "feedTabs", "threadFeed", "featuredPoliticians", "roomDirectory", "homeCounts"].map((id) => [id, document.getElementById(id)]));
+const tabs = [
+  { id: "hot", label: "勢い" },
+  { id: "new", label: "新着" },
+  { id: "arguing", label: "言い合い中" },
+  { id: "watch", label: "ウォッチ中" },
+];
 
-function stanceLabel(thread) {
-  const positions = thread.positions || [];
-  const total = positions.reduce((sum, item) => sum + item.count, 0);
-  if (!total) return "まだ判断が集まっていません";
-  const sorted = [...positions].sort((a, b) => b.count - a.count);
-  if (sorted[0].count - sorted[1].count <= Math.max(1, total * 0.15)) return "意見が割れています";
-  if (sorted[0].id === "unsure") return "判断保留が多い論点";
-  return `${sorted[0].label}の声が多い論点`;
+function allThreads() {
+  const map = new Map();
+  for (const key of ["hotThreads", "newestThreads", "arguingThreads", "dailyIssues"]) {
+    for (const thread of state.payload.featured[key] || []) map.set(thread.id, thread);
+  }
+  return [...map.values()];
 }
 
-function renderImpactFilter() {
-  elements.impactFilter.innerHTML = Object.entries(impactLabels).map(([id, label]) =>
-    `<button type="button" data-impact="${id}" class="segment${state.impact === id ? " is-active" : ""}">${label}</button>`
-  ).join("");
-  elements.impactFilter.querySelectorAll("[data-impact]").forEach((button) => button.addEventListener("click", () => {
-    state.impact = button.dataset.impact;
-    renderImpactFilter();
-    renderIssues();
-  }));
+function activeThreads() {
+  let threads = state.tab === "new" ? state.payload.featured.newestThreads : state.tab === "arguing" ? state.payload.featured.arguingThreads : state.tab === "watch" ? allThreads().filter((thread) => isWatched(thread.id)) : state.payload.featured.hotThreads;
+  if (state.board !== "all") {
+    const board = state.payload.boards.find((item) => item.id === state.board);
+    threads = threads.filter((thread) => board?.roomIds.includes(thread.room));
+  }
+  return threads;
 }
 
-function matchingIssues() {
-  const threads = state.payload.featured.dailyIssues || [];
-  if (state.impact === "all") return threads;
-  return threads.filter((thread) => (thread.impactAreas || []).includes(state.impact));
+function renderSwitches() {
+  const boards = [{ id: "all", label: "全体", note: "すべての会話" }, ...state.payload.boards];
+  el.boardSwitch.innerHTML = boards.map((board) => `<button type="button" data-board="${board.id}" class="board-switch-button${state.board === board.id ? " is-active" : ""}"><strong>${escapeHtml(board.label)}</strong><span>${escapeHtml(board.note || "")}</span></button>`).join("");
+  el.boardSwitch.querySelectorAll("[data-board]").forEach((button) => button.addEventListener("click", () => { state.board = button.dataset.board; renderSwitches(); renderFeed(); }));
+  el.feedTabs.innerHTML = tabs.map((tab) => `<button type="button" data-tab="${tab.id}" class="segment${state.tab === tab.id ? " is-active" : ""}">${tab.label}</button>`).join("");
+  el.feedTabs.querySelectorAll("[data-tab]").forEach((button) => button.addEventListener("click", () => { state.tab = button.dataset.tab; renderSwitches(); renderFeed(); }));
 }
 
-function renderIssues() {
-  const threads = matchingIssues();
-  elements.issueHeading.textContent = state.impact === "all" ? "あなたに関係する論点" : `${impactLabels[state.impact]}に関係する論点`;
+function renderFeed() {
+  const threads = activeThreads();
+  const lastSeen = readLocal("lastSeenComments", {});
   if (!threads.length) {
-    elements.dailyIssueGrid.innerHTML = `<p class="empty-state">この領域の論点はまだありません。</p>`;
+    el.threadFeed.innerHTML = '<p class="empty-state">ここにはまだ会話がありません。</p>';
     return;
   }
-  elements.dailyIssueGrid.innerHTML = threads.map((thread) => `
-    <article class="issue-card">
-      <div class="issue-card-head"><span class="badge">${escapeHtml(roomLabel(state.payload.rooms, thread.room))}</span><span class="mini-row">${escapeHtml(sourceKindLabels[thread.sourceKind] || "出典あり")}</span></div>
-      <div class="impact-tags">${(thread.impactAreas || []).map((id) => `<span>${escapeHtml(impactLabels[id] || id)}</span>`).join("")}</div>
-      <h3><a href="/thread/${thread.id}">${escapeHtml(thread.title)}</a></h3>
-      <p>${escapeHtml(thread.decisionPrompt || thread.summary)}</p>
-      <div class="discussion-health"><strong>${escapeHtml(stanceLabel(thread))}</strong><span>根拠つき ${numberFormat.format(thread.evidenceRate || 0)}%</span></div>
-      <div class="inline-row">${renderTarget(thread.target)}</div>
-      <div class="issue-actions"><a class="button button-primary" href="/thread/${thread.id}">自分の立場を決める</a><button class="watch-button${isWatched(thread.id) ? " is-active" : ""}" type="button" data-watch="${thread.id}" title="あとで追う" aria-label="あとで追う">${isWatched(thread.id) ? "★" : "☆"}</button></div>
-    </article>`).join("");
-  bindWatchButtons(elements.dailyIssueGrid);
+  el.threadFeed.innerHTML = threads.map((thread) => {
+    const unread = Math.max(0, Number(thread.lastCommentNo || 0) - Number(lastSeen[thread.id] || 0));
+    return `<a class="conversation-row" href="/thread/${thread.id}">
+      <div class="conversation-row-main"><div class="inline-row"><span class="badge">${escapeHtml(roomLabel(state.payload.rooms, thread.room))}</span>${renderTarget(thread.target)}${thread.mode === "opposition-welcome" ? '<span class="badge badge-danger">反対歓迎</span>' : ""}</div><strong>${escapeHtml(thread.title)}</strong><p>${escapeHtml(thread.latestExcerpt || thread.summary)}</p></div>
+      <div class="conversation-row-stats"><span><strong>${numberFormat.format(thread.heat || 0)}</strong>勢い</span><span><strong>${numberFormat.format(thread.commentCount || 0)}</strong>レス</span><span><strong>${numberFormat.format(thread.participantCount || 0)}</strong>人</span>${unread ? `<b>+${numberFormat.format(unread)}</b>` : `<small>${relativeTime(thread.lastActivityAt)}</small>`}</div>
+    </a>`;
+  }).join("");
 }
 
-function bindWatchButtons(container) {
-  container.querySelectorAll("[data-watch]").forEach((button) => button.addEventListener("click", () => {
-    const active = toggleWatch(button.dataset.watch);
-    button.textContent = active ? "★" : "☆";
-    button.classList.toggle("is-active", active);
-    renderWatched();
-  }));
+function renderRooms() {
+  el.roomDirectory.innerHTML = state.payload.rooms.map((room) => `<a class="sidebar-link" href="/room/${room.id}"><strong>${escapeHtml(room.label)}</strong><span>${numberFormat.format(room.commentCount || 0)}レス</span></a>`).join("");
 }
 
-function renderWatched() {
-  const threads = state.payload.featured.dailyIssues.filter((thread) => isWatched(thread.id));
-  elements.watchSection.hidden = threads.length === 0;
-  elements.watchCount.textContent = `${threads.length}件`;
-  elements.watchedThreads.innerHTML = threads.map((thread) => `<a href="/thread/${thread.id}"><strong>${escapeHtml(thread.title)}</strong><span>${escapeHtml(stanceLabel(thread))}</span></a>`).join("");
-}
-
-function renderRooms(rooms) {
-  elements.roomDirectory.innerHTML = `<div class="room-card-grid">${rooms.map((room) => `
-    <a class="room-card" href="/room/${room.id}"><strong>${escapeHtml(room.label)}</strong><span>${escapeHtml(room.note)}</span><small>${numberFormat.format(room.threadCount || 0)}論点 · ${numberFormat.format(room.commentCount || 0)}投稿</small></a>`).join("")}</div>`;
-}
-
-function renderPoliticians(politicians) {
-  elements.featuredPoliticians.innerHTML = politicians.map((politician) => `
-    <a class="politician-list-row" href="/politician/${politician.id}"><span class="politician-avatar" aria-hidden="true">${escapeHtml(politician.name.replace(/\s/g, "").slice(0, 1))}</span><span class="politician-list-copy"><strong>${escapeHtml(politician.name)}</strong><span>${escapeHtml(politician.groupShort)} · ${escapeHtml(politician.district)}</span></span><span class="politician-activity">${numberFormat.format(politician.threadCount)}<small>論点</small></span></a>`).join("");
+function renderPoliticians() {
+  el.featuredPoliticians.innerHTML = (state.payload.featured.politicians || []).map((politician) => `<a class="politician-list-row" href="/politician/${politician.id}"><span class="politician-avatar" aria-hidden="true">${escapeHtml(politician.name.replace(/\s/g, "").slice(0, 1))}</span><span class="politician-list-copy"><strong>${escapeHtml(politician.name)}</strong><span>${escapeHtml(politician.groupShort)}</span></span><span class="politician-activity">${numberFormat.format(politician.commentCount)}<small>レス</small></span></a>`).join("");
 }
 
 async function initialize() {
   state.payload = await requestJson("/api/home");
-  renderRoomTabs(elements.roomTabs, state.payload.rooms, null);
-  renderImpactFilter();
-  renderIssues();
-  renderWatched();
-  renderRooms(state.payload.rooms);
-  renderPoliticians(state.payload.featured.politicians || []);
-  elements.groundedThreads.innerHTML = renderThreadRows(state.payload.featured.groundedThreads || [], state.payload.rooms, { showRoom: true });
-  elements.homeCounts.textContent = `${numberFormat.format(state.payload.meta.totalThreads)}論点 · ${numberFormat.format(state.payload.meta.totalComments)}投稿`;
+  renderRoomTabs(el.roomTabs, state.payload.rooms, null);
+  renderSwitches();
+  renderFeed();
+  renderPoliticians();
+  renderRooms();
+  el.homeCounts.textContent = `${numberFormat.format(state.payload.meta.totalThreads)}スレ · ${numberFormat.format(state.payload.meta.totalComments)}レス`;
 }
 
-initialize().catch((error) => { console.error(error); elements.dailyIssueGrid.innerHTML = `<p class="empty-state">読込に失敗しました。</p>`; });
+initialize().catch((error) => { console.error(error); el.threadFeed.innerHTML = '<p class="empty-state">読み込めませんでした。</p>'; });

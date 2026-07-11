@@ -1360,3 +1360,180 @@ select:focus {
   .issue-grid.issue-grid-wide { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .issue-grid.issue-grid-wide .issue-card { min-height: 22rem; }
 }
+
+.conversation-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(19rem, 0.65fr);
+  gap: 0.7rem;
+  align-items: start;
+}
+
+.conversation-panel {
+  min-width: 0;
+  border: 1px solid var(--line-strong);
+  background: var(--surface);
+}
+
+.conversation-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 2px solid var(--ink);
+}
+
+.conversation-head h2 { margin: 0.15rem 0 0; font-size: 1.05rem; }
+.conversation-count { color: var(--ink-soft); font-size: 0.8rem; }
+.conversation-filter { display: flex; gap: 0.25rem; overflow-x: auto; padding: 0.45rem 0.6rem; border-bottom: 1px solid var(--line); }
+.conversation-filter button { flex: 0 0 auto; min-height: 1.9rem; padding: 0 0.55rem; border: 1px solid var(--line); border-radius: 4px; background: #fff; color: var(--ink-soft); font-size: 0.72rem; }
+.conversation-filter button.is-active { border-color: var(--accent); background: var(--accent); color: #fff; }
+
+.conversation-post {
+  scroll-margin-top: 8rem;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--line);
+  background: #fff;
+}
+
+.conversation-post:last-child { border-bottom: 0; }
+.conversation-post:target, .conversation-post.is-reply-target { background: #fff8de; }
+
+.post-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.45rem;
+  color: var(--ink-soft);
+  font-size: 0.73rem;
+}
+
+.post-meta strong { color: var(--success); font-size: 0.78rem; }
+.post-meta code { color: var(--ink-soft); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.7rem; }
+.post-number, .quote-link, .direct-reply { color: var(--accent); font-weight: 700; }
+.post-stance { color: var(--danger); }
+.direct-reply { display: inline-block; margin-top: 0.45rem; font-size: 0.75rem; }
+
+.post-body {
+  overflow-wrap: anywhere;
+  margin-top: 0.55rem;
+  color: var(--ink);
+  font-size: 0.94rem;
+  line-height: 1.75;
+}
+
+.post-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.2rem;
+  margin-top: 0.55rem;
+}
+
+.post-actions a, .post-actions button {
+  min-height: 1.8rem;
+  padding: 0 0.45rem;
+  border: 0;
+  background: transparent;
+  color: var(--ink-soft);
+  font-size: 0.7rem;
+}
+
+.post-actions a { display: inline-flex; align-items: center; }
+.post-actions a:hover, .post-actions button:hover { color: var(--accent); background: var(--accent-soft); }
+
+.reply-context {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 2.4rem;
+  padding: 0.45rem 0.6rem;
+  border-left: 3px solid var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+
+.reply-context[hidden] { display: none; }
+.reply-context button { border: 0; background: transparent; color: inherit; font-size: 1rem; }
+.composer-body textarea { min-height: 11rem; resize: vertical; }
+.composer-details { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.composer-details summary { padding: 0.65rem 0; color: var(--ink-soft); cursor: pointer; font-size: 0.78rem; }
+.composer-options { display: grid; gap: 0.7rem; padding-bottom: 0.75rem; }
+
+.unread-boundary {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.25rem 0;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.unread-boundary::before, .unread-boundary::after { content: ""; height: 1px; flex: 1; background: #8ca5c7; }
+
+.board-intro {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.1rem;
+  border-top: 4px solid var(--ink);
+  background: var(--surface);
+}
+
+.board-intro h1 { margin: 0.2rem 0 0; font-size: 1.55rem; line-height: 1.4; }
+.board-switch { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border: 1px solid var(--line-strong); background: var(--surface); }
+.board-switch-button { display: grid; gap: 0.2rem; min-height: 4.2rem; padding: 0.65rem 0.75rem; border: 0; border-right: 1px solid var(--line); background: transparent; color: var(--ink); text-align: left; }
+.board-switch-button:last-child { border-right: 0; }
+.board-switch-button span { color: var(--ink-soft); font-size: 0.7rem; }
+.board-switch-button.is-active { box-shadow: inset 0 -3px var(--accent); background: var(--accent-soft); color: var(--accent); }
+.forum-layout { display: grid; grid-template-columns: minmax(0, 1.6fr) minmax(17rem, 0.55fr); gap: 0.7rem; align-items: start; }
+.forum-feed { min-width: 0; border: 1px solid var(--line-strong); background: var(--surface); }
+.feed-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 0.7rem; padding: 0.65rem; border-bottom: 2px solid var(--ink); }
+.forum-sidebar { display: grid; gap: 0.7rem; }
+.conversation-feed { display: grid; }
+.conversation-row { display: grid; grid-template-columns: minmax(0, 1fr) 13rem; gap: 0.8rem; align-items: center; padding: 0.8rem 0.9rem; border-bottom: 1px solid var(--line); }
+.conversation-row:last-child { border-bottom: 0; }
+.conversation-row:hover { background: #f8faf9; }
+.conversation-row-main { display: grid; gap: 0.35rem; min-width: 0; }
+.conversation-row-main > strong { overflow-wrap: anywhere; font-size: 0.95rem; }
+.conversation-row-main p { overflow: hidden; margin: 0; color: var(--ink-soft); font-size: 0.76rem; line-height: 1.45; text-overflow: ellipsis; white-space: nowrap; }
+.conversation-row-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.35rem; align-items: center; color: var(--ink-soft); text-align: center; }
+.conversation-row-stats span { display: grid; gap: 0.1rem; font-size: 0.64rem; }
+.conversation-row-stats strong { color: var(--ink); font-size: 0.9rem; }
+.conversation-row-stats b { padding: 0.3rem; border-radius: 4px; background: var(--danger-soft); color: var(--danger); font-size: 0.72rem; }
+.conversation-row-stats small { grid-column: 1 / -1; font-size: 0.68rem; }
+.sidebar-link { display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; padding: 0.65rem 0.75rem; border-bottom: 1px solid var(--line); font-size: 0.78rem; }
+.sidebar-link:last-child { border-bottom: 0; }
+.sidebar-link span { color: var(--ink-soft); font-size: 0.7rem; }
+.entity-board-head { display: flex; align-items: end; justify-content: space-between; gap: 1rem; padding: 1.1rem; border-top: 4px solid var(--ink); background: var(--surface); }
+.entity-board-head h1 { margin: 0.2rem 0; font-size: 1.55rem; }
+.entity-board-head p { margin: 0; color: var(--ink-soft); }
+.profile-details { border: 1px solid var(--line-strong); background: var(--surface); }
+.profile-details > summary { padding: 0.8rem 1rem; cursor: pointer; font-weight: 700; }
+.profile-details .politician-profile { border: 0; border-top: 1px solid var(--line); border-radius: 0; }
+
+@media (max-width: 900px) {
+  .conversation-layout { grid-template-columns: 1fr; }
+  .conversation-layout .discussion-composer { position: static; order: -1; }
+  .composer-body textarea { min-height: 8rem; }
+  .forum-layout { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 640px) {
+  .board-intro { align-items: stretch; flex-direction: column; }
+  .board-intro h1 { font-size: 1.25rem; }
+  .board-switch { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .board-switch-button:nth-child(2) { border-right: 0; }
+  .board-switch-button { min-height: 3.6rem; }
+  .conversation-row { grid-template-columns: 1fr; }
+  .conversation-row-stats { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .conversation-row-stats small { grid-column: auto; }
+  .feed-toolbar { align-items: stretch; flex-direction: column; }
+  .feed-toolbar .segmented-control { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .feed-toolbar .segment { padding-inline: 0.25rem; }
+  .entity-board-head { align-items: stretch; flex-direction: column; }
+}

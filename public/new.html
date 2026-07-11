@@ -20,9 +20,9 @@
           </a>
 
           <nav class="primary-nav" aria-label="主要ページ">
-            <a class="nav-link" href="/">今日の争点</a>
+            <a class="nav-link" href="/">掲示板</a>
             <a class="nav-link" href="/politicians">議員</a>
-            <a class="nav-link is-active" href="/new">論点を立てる</a>
+            <a class="nav-link is-active" href="/new">スレを立てる</a>
           </nav>
         </div>
 
@@ -32,86 +32,44 @@
       <main class="page">
         <section class="panel">
           <div class="section-head">
-            <h1>話したい論点を立てる</h1>
+            <h1>新しいスレを立てる</h1>
           </div>
 
           <form id="composerForm" class="form-stack">
-            <div class="form-grid">
+            <div class="form-grid thread-composer-core">
               <label class="field">
                 <span>部屋</span>
                 <select id="composerRoom"></select>
               </label>
 
-              <label class="field">
-                <span>名前</span>
-                <input id="composerAuthor" type="text" maxlength="32" placeholder="名無しさん" />
-              </label>
-
-              <label class="field">
-                <span>対象</span>
-                <select id="composerTargetType"></select>
-              </label>
-
-              <label id="composerPoliticianField" class="field">
-                <span>議員</span>
-                <select id="composerTargetId"></select>
-              </label>
-
-              <label id="composerTargetLabelField" class="field field-full">
-                <span>政策・政党・地域・指標名</span>
-                <input id="composerTargetLabel" type="text" maxlength="60" />
-              </label>
-
               <label class="field field-full">
                 <span>スレタイ</span>
-                <input id="composerTitle" type="text" maxlength="120" />
+                <input id="composerTitle" type="text" minlength="4" maxlength="120" required placeholder="何について話す？" />
               </label>
 
               <label class="field field-full">
-                <span>冒頭</span>
-                <textarea id="composerSummary" rows="3" maxlength="240"></textarea>
-              </label>
-
-              <label class="field field-full">
-                <span>みんなに判断してほしい問い</span>
-                <input id="composerDecisionPrompt" type="text" maxlength="180" required placeholder="例: 消費税減税を時限措置として実施するべきか" />
-              </label>
-
-              <fieldset class="field field-full">
-                <legend>生活のどこに関係する？（1〜3個）</legend>
-                <div id="composerImpacts" class="check-grid"></div>
-              </fieldset>
-
-              <label class="field field-full">
-                <span>本文</span>
-                <textarea id="composerBody" rows="8" maxlength="4000"></textarea>
-              </label>
-
-              <label class="field">
-                <span>タグ</span>
-                <input id="composerTags" type="text" />
-              </label>
-
-              <label class="field">
-                <span>一次情報・ニュースのURL</span>
-                <input id="composerSourceUrl" type="url" required />
-              </label>
-
-              <label class="field">
-                <span>出典の種類</span>
-                <select id="composerSourceKind" required>
-                  <option value="official">公的機関・一次資料</option>
-                  <option value="news">報道</option>
-                  <option value="analysis">解説・分析</option>
-                  <option value="other">その他</option>
-                </select>
-              </label>
-
-              <label class="checkbox-line field-full">
-                <input id="composerMegathread" type="checkbox" />
-                <span>メガスレ</span>
+                <span>最初の書き込み</span>
+                <textarea id="composerBody" rows="10" minlength="2" maxlength="4000" required placeholder="思っていること、聞きたいことを書く"></textarea>
               </label>
             </div>
+
+            <details class="composer-details">
+              <summary>対象・モード・出典などを追加</summary>
+              <div class="form-grid composer-options">
+                <label class="field"><span>名前</span><input id="composerAuthor" type="text" maxlength="32" placeholder="名無しさん" /></label>
+                <label class="field"><span>会話モード</span><select id="composerMode"><option value="mixed">ごちゃ混ぜ</option><option value="same-side">同じ側で話す</option><option value="opposition-welcome">反対意見歓迎</option></select></label>
+                <label class="field"><span>対象</span><select id="composerTargetType"></select></label>
+                <label id="composerPoliticianField" class="field"><span>議員</span><select id="composerTargetId"></select></label>
+                <label id="composerTargetLabelField" class="field field-full"><span>政策・政党・地域・指標名</span><input id="composerTargetLabel" type="text" maxlength="60" /></label>
+                <label class="field field-full"><span>補足（一覧用）</span><textarea id="composerSummary" rows="2" maxlength="240"></textarea></label>
+                <label class="field field-full"><span>問い</span><input id="composerDecisionPrompt" type="text" maxlength="180" /></label>
+                <fieldset class="field field-full"><legend>関係する分野</legend><div id="composerImpacts" class="check-grid"></div></fieldset>
+                <label class="field"><span>タグ</span><input id="composerTags" type="text" /></label>
+                <label class="field"><span>ニュース・資料URL</span><input id="composerSourceUrl" type="url" /></label>
+                <label class="field"><span>出典の種類</span><select id="composerSourceKind"><option value="other">その他</option><option value="official">公的機関・一次資料</option><option value="news">報道</option><option value="analysis">解説・分析</option></select></label>
+                <label class="checkbox-line field-full"><input id="composerMegathread" type="checkbox" /><span>メガスレ</span></label>
+              </div>
+            </details>
 
             <p id="composerFeedback" class="form-feedback" hidden></p>
 

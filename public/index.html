@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>今日、生活に効く争点 | 政経フォーラム</title>
-    <meta name="description" content="政治と経済を、自分の生活への影響から考える議論の場" />
+    <title>政治と経済の匿名掲示板 | 政経フォーラム</title>
+    <meta name="description" content="議員、政策、政治、経済について匿名で語る掲示板" />
     <link rel="stylesheet" href="/styles.css" />
   </head>
   <body>
@@ -16,59 +16,37 @@
             <span class="brand-copy"><span class="brand-kicker">Political Economy Forum</span><strong>政経フォーラム</strong></span>
           </a>
           <nav class="primary-nav" aria-label="主要ページ">
-            <a class="nav-link is-active" href="/">今日の争点</a>
+            <a class="nav-link is-active" href="/">掲示板</a>
             <a class="nav-link" href="/politicians">議員</a>
-            <a class="nav-link" href="/new">論点を立てる</a>
+            <a class="nav-link" href="/new">スレを立てる</a>
           </nav>
         </div>
         <div id="roomTabs" class="room-strip" aria-label="部屋一覧"></div>
       </header>
 
       <main class="page">
-        <section class="agenda-hero">
-          <img src="/assets/diet-chamber.jpg" alt="国会議事堂の本会議場" />
-          <div class="agenda-hero-shade"></div>
-          <div class="agenda-hero-content">
-            <p class="eyebrow">今日、生活に効く争点</p>
-            <h1>政治を「自分ごと」から考える</h1>
-            <p>ニュースの賛否だけで終わらせず、家計・仕事・地域・将来への影響と根拠を並べる。</p>
-            <div id="impactFilter" class="segmented-control" aria-label="生活への影響で絞り込む"></div>
-          </div>
+        <section class="board-intro">
+          <div><p class="eyebrow">Anonymous political forum</p><h1>いま政治と経済で、何を言い合ってる？</h1></div>
+          <a class="button button-primary" href="/new">スレを立てる</a>
         </section>
 
-        <section class="unframed-section">
-          <div class="section-title-row">
-            <div><p class="eyebrow">Your life, your judgment</p><h2 id="issueHeading">あなたに関係する論点</h2></div>
-            <a class="button button-primary" href="/new">論点を立てる</a>
-          </div>
-          <div id="dailyIssueGrid" class="issue-grid issue-grid-wide"></div>
-        </section>
+        <nav id="boardSwitch" class="board-switch" aria-label="板を選ぶ"></nav>
 
-        <section id="watchSection" class="watch-band" hidden>
-          <div class="section-title-row"><div><p class="eyebrow">Watching</p><h2>あとで追う論点</h2></div><span id="watchCount" class="count-label"></span></div>
-          <div id="watchedThreads" class="watch-list"></div>
-        </section>
-
-        <div class="home-columns">
-          <section class="panel">
-            <div class="section-head"><h2>根拠が集まっている議論</h2><span class="section-note">出典つき投稿を優先</span></div>
-            <div id="groundedThreads"></div>
+        <div class="forum-layout">
+          <section class="forum-feed">
+            <div class="feed-toolbar"><div id="feedTabs" class="segmented-control compact" aria-label="並び順"></div><span id="homeCounts" class="section-note"></span></div>
+            <div id="threadFeed" class="conversation-feed"></div>
           </section>
-          <section class="panel">
-            <div class="section-head"><h2>議員から探す</h2></div>
-            <div id="featuredPoliticians" class="politician-list"></div>
-          </section>
+          <aside class="forum-sidebar">
+            <section class="panel"><div class="section-head"><h2>議員別の掲示板</h2></div><div id="featuredPoliticians" class="politician-list"></div></section>
+            <section class="panel"><div class="section-head"><h2>細かいテーマ</h2></div><div id="roomDirectory"></div></section>
+          </aside>
         </div>
-
-        <section class="panel">
-          <div class="section-head"><h2>テーマから入る</h2><span id="homeCounts" class="section-note"></span></div>
-          <div id="roomDirectory"></div>
-        </section>
       </main>
 
       <footer class="site-footer">
-        <span>出典を読み、立場を分け、生活への影響を残す。</span>
-        <a href="https://commons.wikimedia.org/wiki/File:Japanese_diet_inside.jpg" target="_blank" rel="noreferrer">写真: Chris 73 / Wikimedia Commons / CC BY-SA 3.0</a>
+        <span>政治をタネに、本音で話す。</span>
+        <span>脅迫、晒し、差別、執拗な個人攻撃は通報対象です。</span>
       </footer>
     </div>
     <script src="/shared.js"></script>

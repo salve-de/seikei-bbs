@@ -21,6 +21,7 @@ const elements = {
   composerForm: document.getElementById("composerForm"),
   composerRoom: document.getElementById("composerRoom"),
   composerAuthor: document.getElementById("composerAuthor"),
+  composerMode: document.getElementById("composerMode"),
   composerTargetType: document.getElementById("composerTargetType"),
   composerTargetId: document.getElementById("composerTargetId"),
   composerTargetLabel: document.getElementById("composerTargetLabel"),
@@ -55,7 +56,7 @@ function populateRooms() {
 }
 
 function populateTargets() {
-  elements.composerTargetType.innerHTML = state.board.targetDefinitions
+  elements.composerTargetType.innerHTML = `<option value="">指定しない</option>` + state.board.targetDefinitions
     .map((target) => `<option value="${target.id}">${escapeHtml(target.label)}</option>`)
     .join("");
   elements.composerTargetId.innerHTML = state.board.politicians
@@ -84,11 +85,12 @@ function populateImpacts() {
 
 function updateTargetFields() {
   const politicianSelected = elements.composerTargetType.value === "politician";
+  const genericSelected = Boolean(elements.composerTargetType.value) && !politicianSelected;
   elements.composerPoliticianField.hidden = !politicianSelected;
-  elements.composerTargetLabelField.hidden = politicianSelected;
+  elements.composerTargetLabelField.hidden = !genericSelected;
   elements.composerTargetId.disabled = !politicianSelected;
   elements.composerTargetLabel.disabled = politicianSelected;
-  elements.composerTargetLabel.required = !politicianSelected;
+  elements.composerTargetLabel.required = genericSelected;
 }
 
 function duplicateCandidates() {
@@ -148,6 +150,7 @@ async function submitThread(event) {
       body: JSON.stringify({
         room: elements.composerRoom.value,
         author: elements.composerAuthor.value,
+        mode: elements.composerMode.value,
         title: elements.composerTitle.value,
         summary: elements.composerSummary.value,
         decisionPrompt: elements.composerDecisionPrompt.value,

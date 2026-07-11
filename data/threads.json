@@ -39,7 +39,10 @@
       "rights",
       "future"
     ],
-    "sourceKind": "official"
+    "sourceKind": "official",
+    "schemaVersion": 2,
+    "mode": "mixed",
+    "lastCommentNo": 2
   },
   {
     "id": "tax-001",
@@ -81,7 +84,10 @@
       "household",
       "future"
     ],
-    "sourceKind": "official"
+    "sourceKind": "official",
+    "schemaVersion": 2,
+    "mode": "mixed",
+    "lastCommentNo": 3
   },
   {
     "id": "prices-001",
@@ -123,7 +129,10 @@
       "household",
       "work"
     ],
-    "sourceKind": "official"
+    "sourceKind": "official",
+    "schemaVersion": 2,
+    "mode": "mixed",
+    "lastCommentNo": 1
   },
   {
     "id": "boj-mega",
@@ -166,7 +175,10 @@
       "household",
       "work"
     ],
-    "sourceKind": "official"
+    "sourceKind": "official",
+    "schemaVersion": 2,
+    "mode": "mixed",
+    "lastCommentNo": 2
   },
   {
     "id": "security-001",
@@ -208,7 +220,10 @@
       "security",
       "future"
     ],
-    "sourceKind": "official"
+    "sourceKind": "official",
+    "schemaVersion": 2,
+    "mode": "mixed",
+    "lastCommentNo": 1
   },
   {
     "id": "election-001",
@@ -250,7 +265,10 @@
       "rights",
       "region"
     ],
-    "sourceKind": "official"
+    "sourceKind": "official",
+    "schemaVersion": 2,
+    "mode": "mixed",
+    "lastCommentNo": 1
   },
   {
     "id": "takaichi-policy-001",
@@ -292,7 +310,10 @@
       "rights",
       "region"
     ],
-    "sourceKind": "official"
+    "sourceKind": "official",
+    "schemaVersion": 2,
+    "mode": "mixed",
+    "lastCommentNo": 1
   },
   {
     "id": "tamaki-session-001",
@@ -334,6 +355,9 @@
       "household",
       "future"
     ],
-    "sourceKind": "official"
+    "sourceKind": "official",
+    "schemaVersion": 2,
+    "mode": "mixed",
+    "lastCommentNo": 1
   }
 ]

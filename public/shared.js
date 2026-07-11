@@ -11,7 +11,10 @@
   }
 
   async function requestJson(url, options) {
-    const response = await fetch(url, options);
+    const actorToken = getActorToken();
+    const headers = new Headers(options?.headers || {});
+    headers.set("x-board-actor", actorToken);
+    const response = await fetch(url, { ...options, headers });
     const payload = await response.json();
 
     if (!response.ok) {
@@ -237,6 +240,14 @@
     localStorage.setItem(`seikei:${key}`, JSON.stringify(value));
   }
 
+  function getActorToken() {
+    const stored = localStorage.getItem("seikei:actorToken");
+    if (stored) return stored;
+    const token = crypto.randomUUID ? crypto.randomUUID() : `${Date.now()}-${Math.random()}`;
+    localStorage.setItem("seikei:actorToken", token);
+    return token;
+  }
+
   function isWatched(threadId) {
     return readLocal("watchedThreads", []).includes(threadId);
   }
@@ -277,6 +288,7 @@
     setFeedback,
     readLocal,
     writeLocal,
+    getActorToken,
     isWatched,
     toggleWatch,
     rememberAction,

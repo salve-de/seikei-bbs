@@ -1,24 +1,6 @@
 {
   "money-mega": [
     {
-      "id": "c-money-1",
-      "author": "名無しさん",
-      "body": "公開基準を厳しくしても支部経由の抜け道が残るなら意味が薄い。監査の独立性まで必要。",
-      "createdAt": "2026-04-09T13:44:12.546Z",
-      "stance": "oppose",
-      "claimType": "opinion",
-      "impactAreas": [
-        "rights",
-        "future"
-      ],
-      "sourceUrl": "",
-      "helpfulness": {
-        "useful": 6,
-        "changed": 2,
-        "weak": 0
-      }
-    },
-    {
       "id": "c-money-2",
       "author": "調査班",
       "body": "企業献金そのものより、公開頻度と監査体制をどう変えるかが本体だと思う。",
@@ -34,15 +16,55 @@
         "useful": 8,
         "changed": 3,
         "weak": 0
+      },
+      "schemaVersion": 2,
+      "number": 1,
+      "replyToId": null,
+      "replyToNumber": null,
+      "quotedNumbers": [],
+      "reactions": {
+        "agree": 0,
+        "laugh": 0,
+        "disagree": 0,
+        "source": 0
+      }
+    },
+    {
+      "id": "c-money-1",
+      "author": "名無しさん",
+      "body": "公開基準を厳しくしても支部経由の抜け道が残るなら意味が薄い。監査の独立性まで必要。",
+      "createdAt": "2026-04-09T13:44:12.546Z",
+      "stance": "oppose",
+      "claimType": "opinion",
+      "impactAreas": [
+        "rights",
+        "future"
+      ],
+      "sourceUrl": "",
+      "helpfulness": {
+        "useful": 6,
+        "changed": 2,
+        "weak": 0
+      },
+      "schemaVersion": 2,
+      "number": 2,
+      "replyToId": null,
+      "replyToNumber": null,
+      "quotedNumbers": [],
+      "reactions": {
+        "agree": 0,
+        "laugh": 0,
+        "disagree": 0,
+        "source": 0
       }
     }
   ],
   "tax-001": [
     {
-      "id": "c-tax-1",
-      "author": "名無しさん",
-      "body": "時限減税ならまだ議論できるが、恒久減税なら社会保険をどうするかまで避けられない。",
-      "createdAt": "2026-04-09T14:50:12.546Z",
+      "id": "c-tax-3",
+      "author": "財源厨",
+      "body": "何を削るかを言わずに減税だけ叫ぶ話はこのスレでは切り分けたい。",
+      "createdAt": "2026-04-09T12:44:12.546Z",
       "stance": "oppose",
       "claimType": "opinion",
       "impactAreas": [
@@ -51,9 +73,20 @@
       ],
       "sourceUrl": "",
       "helpfulness": {
-        "useful": 9,
-        "changed": 4,
+        "useful": 3,
+        "changed": 0,
         "weak": 0
+      },
+      "schemaVersion": 2,
+      "number": 1,
+      "replyToId": null,
+      "replyToNumber": null,
+      "quotedNumbers": [],
+      "reactions": {
+        "agree": 0,
+        "laugh": 0,
+        "disagree": 0,
+        "source": 0
       }
     },
     {
@@ -72,13 +105,24 @@
         "useful": 7,
         "changed": 2,
         "weak": 0
+      },
+      "schemaVersion": 2,
+      "number": 2,
+      "replyToId": null,
+      "replyToNumber": null,
+      "quotedNumbers": [],
+      "reactions": {
+        "agree": 0,
+        "laugh": 0,
+        "disagree": 0,
+        "source": 0
       }
     },
     {
-      "id": "c-tax-3",
-      "author": "財源厨",
-      "body": "何を削るかを言わずに減税だけ叫ぶ話はこのスレでは切り分けたい。",
-      "createdAt": "2026-04-09T12:44:12.546Z",
+      "id": "c-tax-1",
+      "author": "名無しさん",
+      "body": "時限減税ならまだ議論できるが、恒久減税なら社会保険をどうするかまで避けられない。",
+      "createdAt": "2026-04-09T14:50:12.546Z",
       "stance": "oppose",
       "claimType": "opinion",
       "impactAreas": [
@@ -87,9 +131,20 @@
       ],
       "sourceUrl": "",
       "helpfulness": {
-        "useful": 3,
-        "changed": 0,
+        "useful": 9,
+        "changed": 4,
         "weak": 0
+      },
+      "schemaVersion": 2,
+      "number": 3,
+      "replyToId": null,
+      "replyToNumber": null,
+      "quotedNumbers": [],
+      "reactions": {
+        "agree": 0,
+        "laugh": 0,
+        "disagree": 0,
+        "source": 0
       }
     }
   ],
@@ -110,28 +165,21 @@
         "useful": 12,
         "changed": 5,
         "weak": 0
+      },
+      "schemaVersion": 2,
+      "number": 1,
+      "replyToId": null,
+      "replyToNumber": null,
+      "quotedNumbers": [],
+      "reactions": {
+        "agree": 0,
+        "laugh": 0,
+        "disagree": 0,
+        "source": 0
       }
     }
   ],
   "boj-mega": [
-    {
-      "id": "c-boj-1",
-      "author": "相場民",
-      "body": "円安が家計に効く速度と株価に効く速度が違うから、感情だけで利上げ賛否を決めにくい。",
-      "createdAt": "2026-04-09T15:02:12.546Z",
-      "stance": "unsure",
-      "claimType": "opinion",
-      "impactAreas": [
-        "household",
-        "work"
-      ],
-      "sourceUrl": "",
-      "helpfulness": {
-        "useful": 10,
-        "changed": 6,
-        "weak": 0
-      }
-    },
     {
       "id": "c-boj-2",
       "author": "名無しさん",
@@ -148,6 +196,46 @@
         "useful": 6,
         "changed": 3,
         "weak": 0
+      },
+      "schemaVersion": 2,
+      "number": 1,
+      "replyToId": null,
+      "replyToNumber": null,
+      "quotedNumbers": [],
+      "reactions": {
+        "agree": 0,
+        "laugh": 0,
+        "disagree": 0,
+        "source": 0
+      }
+    },
+    {
+      "id": "c-boj-1",
+      "author": "相場民",
+      "body": "円安が家計に効く速度と株価に効く速度が違うから、感情だけで利上げ賛否を決めにくい。",
+      "createdAt": "2026-04-09T15:02:12.546Z",
+      "stance": "unsure",
+      "claimType": "opinion",
+      "impactAreas": [
+        "household",
+        "work"
+      ],
+      "sourceUrl": "",
+      "helpfulness": {
+        "useful": 10,
+        "changed": 6,
+        "weak": 0
+      },
+      "schemaVersion": 2,
+      "number": 2,
+      "replyToId": null,
+      "replyToNumber": null,
+      "quotedNumbers": [],
+      "reactions": {
+        "agree": 0,
+        "laugh": 0,
+        "disagree": 0,
+        "source": 0
       }
     }
   ],
@@ -168,6 +256,17 @@
         "useful": 0,
         "changed": 0,
         "weak": 0
+      },
+      "schemaVersion": 2,
+      "number": 1,
+      "replyToId": null,
+      "replyToNumber": null,
+      "quotedNumbers": [],
+      "reactions": {
+        "agree": 0,
+        "laugh": 0,
+        "disagree": 0,
+        "source": 0
       }
     }
   ],
@@ -188,6 +287,17 @@
         "useful": 0,
         "changed": 0,
         "weak": 0
+      },
+      "schemaVersion": 2,
+      "number": 1,
+      "replyToId": null,
+      "replyToNumber": null,
+      "quotedNumbers": [],
+      "reactions": {
+        "agree": 0,
+        "laugh": 0,
+        "disagree": 0,
+        "source": 0
       }
     }
   ],
@@ -208,6 +318,17 @@
         "useful": 0,
         "changed": 0,
         "weak": 0
+      },
+      "schemaVersion": 2,
+      "number": 1,
+      "replyToId": null,
+      "replyToNumber": null,
+      "quotedNumbers": [],
+      "reactions": {
+        "agree": 0,
+        "laugh": 0,
+        "disagree": 0,
+        "source": 0
       }
     }
   ],
@@ -228,6 +349,17 @@
         "useful": 0,
         "changed": 0,
         "weak": 0
+      },
+      "schemaVersion": 2,
+      "number": 1,
+      "replyToId": null,
+      "replyToNumber": null,
+      "quotedNumbers": [],
+      "reactions": {
+        "agree": 0,
+        "laugh": 0,
+        "disagree": 0,
+        "source": 0
       }
     }
   ]
