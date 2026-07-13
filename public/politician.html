@@ -4,46 +4,66 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>人物 | 政経板</title>
-    <meta name="description" content="人物に関連する会話" />
+    <meta name="description" content="政治家のプロフィールと関連掲示板" />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/crowd.css" />
+    <link rel="stylesheet" href="/entity.css" />
   </head>
   <body>
     <div class="app-shell">
       <header class="site-header">
         <div class="site-header-main">
-          <a class="brand" href="/">
-            <span class="brand-mark" aria-hidden="true"></span>
-            <span class="brand-copy"><strong>政経板</strong></span>
-          </a>
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>政経板</strong></span></a>
           <nav class="primary-nav" aria-label="主要ページ">
             <a class="nav-link" href="/">盛り上がり</a>
             <a class="nav-link is-active" href="/politicians">人物</a>
+            <a class="nav-link" href="/topics.html">テーマ</a>
             <a class="nav-link" href="/new">会場を作る</a>
           </nav>
         </div>
         <div id="roomTabs" class="room-strip" aria-label="板を選ぶ"></div>
       </header>
 
-      <main class="page">
+      <main class="page entity-page">
         <nav class="breadcrumb" aria-label="パンくず">
           <a href="/">ホーム</a><span>/</span><a href="/politicians">人物</a>
         </nav>
 
-        <section class="entity-board-head">
-          <div><h1 id="politicianBoardTitle">人物</h1><p id="politicianBoardMeta"></p></div>
-          <a id="politicianNewThread" class="button button-primary" href="/new">会場を作る</a>
-        </section>
+        <section id="politicianProfile" class="entity-profile-card"></section>
 
-        <section class="panel">
-          <div class="section-head">
-            <h2>会場</h2>
-            <span id="politicianThreadCount" class="count-label">0</span>
-          </div>
-          <div id="politicianThreads" class="conversation-feed"></div>
-        </section>
+        <div class="entity-board-layout">
+          <section class="entity-board-main">
+            <div class="section-head entity-board-headline">
+              <div>
+                <h1 id="politicianBoardTitle">掲示板</h1>
+                <p id="politicianBoardMeta" class="section-note"></p>
+              </div>
+              <span id="politicianThreadCount" class="count-label">0件</span>
+            </div>
+            <div id="politicianThreads" class="conversation-feed"></div>
+          </section>
 
-        <details class="profile-details"><summary>プロフィール</summary><section id="politicianProfile" class="politician-profile"></section></details>
+          <aside class="entity-composer-card">
+            <form id="politicianQuickForm" class="composer-panel">
+              <div><h2>この人物について投稿</h2></div>
+              <label class="field composer-body">
+                <span>本文</span>
+                <textarea id="politicianQuickBody" rows="7" maxlength="2000" required placeholder="言いたいこと、質問、予想を書く"></textarea>
+              </label>
+              <label class="field">
+                <span>投稿先</span>
+                <select id="politicianQuickRoom"></select>
+              </label>
+              <label class="field">
+                <span>URL</span>
+                <input id="politicianQuickSource" type="url" placeholder="任意" />
+              </label>
+              <p id="politicianQuickFeedback" class="form-feedback" hidden></p>
+              <button id="politicianQuickSubmit" class="button button-primary" type="submit">投稿する</button>
+              <a id="politicianNewThread" class="text-link" href="/new">詳細設定で投稿</a>
+            </form>
+          </aside>
+        </div>
       </main>
     </div>
 
