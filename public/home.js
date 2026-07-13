@@ -15,9 +15,11 @@ const {
 const requestedBoard = new URL(location.href).searchParams.get("board");
 const state = {
   payload: null,
+  boardPayload: null,
   tab: "hot",
   board: ["politics", "economy", "live"].includes(requestedBoard) ? requestedBoard : "all",
   arenaDetails: new Map(),
+  searchIndex: [],
 };
 
 const ids = [
@@ -26,9 +28,16 @@ const ids = [
   "feedTabs",
   "threadFeed",
   "featuredPoliticians",
+  "featuredTopics",
   "roomDirectory",
   "homeCounts",
   "hotArenas",
+  "latestTopics",
+  "showNewestButton",
+  "siteSearchForm",
+  "siteSearchInput",
+  "searchResults",
+  "popularSearches",
   "quickPostForm",
   "quickBody",
   "quickRoom",
@@ -40,11 +49,11 @@ const el = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)])
 
 const tabs = [
   { id: "hot", label: "勢い" },
+  { id: "new", label: "最新" },
   { id: "arguing", label: "言い合い中" },
-  { id: "live", label: "実況" },
+  { id: "live", label: "速報・実況" },
   { id: "source", label: "資料あり" },
   { id: "unanswered", label: "返信なし" },
-  { id: "new", label: "新着" },
   { id: "watch", label: "ウォッチ" },
 ];
 
@@ -56,7 +65,7 @@ function truncate(value, max = 90) {
 function allThreads() {
   const map = new Map();
   const groups = [
-    state.payload?.threads,
+    state.boardPayload?.threads,
     state.payload?.featured?.hotThreads,
     state.payload?.featured?.newestThreads,
     state.payload?.featured?.arguingThreads,
@@ -159,7 +168,7 @@ function renderFeed() {
   const lastSeen = readLocal("lastSeenComments", {});
 
   if (!threads.length) {
-    const message = state.tab === "unanswered" ? "返信を待っている会場はありません。" : "ここにはまだ会話がありません。";
+    const message = state.tab === "unanswered" ? "返信を待っているスレッドはありません。" : "該当するスレッドはありません。";
     el.threadFeed.innerHTML = `<p class="empty-state">${message}</p>`;
     return;
   }
@@ -188,6 +197,23 @@ function renderFeed() {
     .join("");
 }
 
+function renderLatestTopics() {
+  const threads = (state.payload.featured.newestThreads || []).slice(0, 4);
+  if (!threads.length) {
+    el.latestTopics.innerHTML = '<p class="empty-state">最新の投稿はありません。</p>';
+    return;
+  }
+  el.latestTopics.innerHTML = threads.map((thread) => `<a class="current-topic-card" href="/thread/${thread.id}">
+    <div class="current-topic-meta">
+      <span>${escapeHtml(roomLabel(state.payload.rooms, thread.room))}</span>
+      <span>${relativeTime(thread.lastActivityAt)}</span>
+      ${threadSignals(thread)}
+    </div>
+    <strong>${escapeHtml(thread.title)}</strong>
+    <div class="current-topic-meta"><span>${numberFormat.format(thread.commentCount || 0)}レス</span><span>${numberFormat.format(thread.participantCount || 0)}人</span></div>
+  </a>`).join("");
+}
+
 function pickVoices(detail) {
   const comments = [...(detail?.comments || [])].sort((a, b) => Number(b.number || 0) - Number(a.number || 0));
   if (!comments.length) return [];
@@ -205,7 +231,7 @@ function pickVoices(detail) {
 function renderHotArenas() {
   const threads = (state.payload.featured.hotThreads || []).slice(0, 3);
   if (!threads.length) {
-    el.hotArenas.innerHTML = '<p class="empty-state">まだ沸いている会場はありません。最初の会場を作ってください。</p>';
+    el.hotArenas.innerHTML = '<p class="empty-state">まだ盛り上がっているスレッドはありません。</p>';
     return;
   }
 
@@ -243,7 +269,7 @@ async function hydrateArenaDetails() {
         const detail = await requestJson(`/api/threads/${encodeURIComponent(thread.id)}`);
         state.arenaDetails.set(thread.id, detail);
       } catch (error) {
-        console.warn("arena detail unavailable", thread.id, error);
+        console.warn("thread detail unavailable", thread.id, error);
       }
     })
   );
@@ -261,8 +287,19 @@ function renderRooms() {
     .join("");
 }
 
+function activePoliticians() {
+  return [...(state.boardPayload.politicians || [])]
+    .filter((politician) => Number(politician.activityCount || 0) > 0)
+    .sort((left, right) => Number(right.activityCount || 0) - Number(left.activityCount || 0));
+}
+
 function renderPoliticians() {
-  el.featuredPoliticians.innerHTML = (state.payload.featured.politicians || [])
+  const politicians = activePoliticians().slice(0, 6);
+  if (!politicians.length) {
+    el.featuredPoliticians.innerHTML = '<p class="sidebar-empty">投稿がある政治家はまだいません。</p>';
+    return;
+  }
+  el.featuredPoliticians.innerHTML = politicians
     .map(
       (politician) => `<a class="politician-list-row" href="/politician/${politician.id}">
         <span class="politician-avatar" aria-hidden="true">${escapeHtml(politician.name.replace(/\s/g, "").slice(0, 1))}</span>
@@ -271,6 +308,37 @@ function renderPoliticians() {
       </a>`
     )
     .join("");
+}
+
+function topicThreads(topic) {
+  return allThreads().filter((thread) =>
+    thread.target?.id === topic.id ||
+    thread.target?.label === topic.targetLabel ||
+    (thread.tags || []).includes(topic.name)
+  );
+}
+
+function activeTopics() {
+  return (window.TopicDefinitions || [])
+    .map((topic) => {
+      const threads = topicThreads(topic);
+      const score = threads.reduce((sum, thread) => sum + Number(thread.heat || 0) + Number(thread.commentCount || 0) * 3, 0);
+      return { ...topic, threads, score };
+    })
+    .filter((topic) => topic.score > 0)
+    .sort((left, right) => right.score - left.score);
+}
+
+function renderTopics() {
+  const topics = activeTopics().slice(0, 6);
+  if (!topics.length) {
+    el.featuredTopics.innerHTML = '<p class="sidebar-empty">投稿があるテーマはまだありません。</p>';
+    return;
+  }
+  el.featuredTopics.innerHTML = topics.map((topic) => {
+    const comments = topic.threads.reduce((sum, thread) => sum + Number(thread.commentCount || 0), 0);
+    return `<a class="sidebar-link" href="/topic.html?id=${encodeURIComponent(topic.id)}"><strong>${escapeHtml(topic.name)}</strong><span>${numberFormat.format(comments)}レス</span></a>`;
+  }).join("");
 }
 
 function populateQuickRooms() {
@@ -296,7 +364,7 @@ async function submitQuickPost(event) {
   const sourceUrl = el.quickSource.value.trim();
   const kind = new FormData(el.quickPostForm).get("quickKind") || "一言";
   if (body.length < 2) {
-    setFeedback(el.quickPostFeedback, "一言だけでも入力してください。");
+    setFeedback(el.quickPostFeedback, "本文を入力してください。");
     el.quickBody.focus();
     return;
   }
@@ -330,11 +398,114 @@ async function submitQuickPost(event) {
   } catch (error) {
     setFeedback(el.quickPostFeedback, parseCooldown(error));
     el.quickSubmit.disabled = false;
-    el.quickSubmit.textContent = "会場を作る";
+    el.quickSubmit.textContent = "スレッドを立てる";
   }
 }
 
-function bindQuickComposer() {
+function buildSearchIndex() {
+  const items = [];
+  for (const politician of state.boardPayload.politicians || []) {
+    items.push({
+      type: "政治家",
+      title: politician.name,
+      subtitle: `${politician.groupShort} · ${politician.district}`,
+      keywords: [politician.name, politician.nameKana, politician.group, politician.groupShort, politician.district].join(" ").toLowerCase(),
+      href: `/politician/${politician.id}`,
+      score: Number(politician.activityCount || 0),
+    });
+  }
+  for (const topic of window.TopicDefinitions || []) {
+    const activity = activeTopics().find((item) => item.id === topic.id);
+    items.push({
+      type: "テーマ",
+      title: topic.name,
+      subtitle: topic.category,
+      keywords: [topic.name, topic.category, topic.description].join(" ").toLowerCase(),
+      href: `/topic.html?id=${encodeURIComponent(topic.id)}`,
+      score: Number(activity?.score || 0),
+    });
+  }
+  for (const thread of allThreads()) {
+    items.push({
+      type: "スレッド",
+      title: thread.title,
+      subtitle: `${roomLabel(state.payload.rooms, thread.room)} · ${relativeTime(thread.lastActivityAt)}`,
+      keywords: [thread.title, thread.summary, thread.body, thread.target?.label, ...(thread.tags || [])].join(" ").toLowerCase(),
+      href: `/thread/${thread.id}`,
+      score: Number(thread.heat || 0) + Number(thread.commentCount || 0),
+    });
+  }
+  state.searchIndex = items;
+}
+
+function searchItems(query) {
+  const normalized = String(query || "").trim().toLowerCase();
+  if (!normalized) return [];
+  return state.searchIndex
+    .filter((item) => item.keywords.includes(normalized) || item.title.toLowerCase().includes(normalized))
+    .sort((left, right) => right.score - left.score)
+    .slice(0, 8);
+}
+
+function renderSearchResults(query) {
+  const results = searchItems(query);
+  if (!query.trim()) {
+    el.searchResults.hidden = true;
+    el.searchResults.innerHTML = "";
+    return;
+  }
+  el.searchResults.hidden = false;
+  if (!results.length) {
+    el.searchResults.innerHTML = '<p class="empty-state">見つかりませんでした。</p>';
+    return;
+  }
+  el.searchResults.innerHTML = results.map((item) => `<a class="search-result-row" href="${item.href}">
+    <span class="search-result-type">${escapeHtml(item.type)}</span>
+    <span class="search-result-copy"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.subtitle)}</span></span>
+    <span aria-hidden="true">›</span>
+  </a>`).join("");
+}
+
+function renderPopularSearches() {
+  const candidates = [];
+  for (const politician of activePoliticians().slice(0, 3)) {
+    candidates.push({ label: politician.name, href: `/politician/${politician.id}`, score: Number(politician.activityCount || 0) });
+  }
+  for (const topic of activeTopics().slice(0, 3)) {
+    candidates.push({ label: topic.name, href: `/topic.html?id=${encodeURIComponent(topic.id)}`, score: topic.score });
+  }
+  const seen = new Set();
+  const popular = candidates
+    .sort((left, right) => right.score - left.score)
+    .filter((item) => {
+      if (seen.has(item.label)) return false;
+      seen.add(item.label);
+      return true;
+    })
+    .slice(0, 5);
+
+  if (!popular.length) {
+    el.popularSearches.innerHTML = '<span>人気の人物・テーマは投稿状況に応じて表示されます。</span>';
+    return;
+  }
+  el.popularSearches.innerHTML = `<span>人気:</span>${popular.map((item) => `<a class="popular-chip" href="${item.href}">${escapeHtml(item.label)}</a>`).join("")}`;
+}
+
+function bindSearch() {
+  el.siteSearchInput.addEventListener("input", () => renderSearchResults(el.siteSearchInput.value));
+  el.siteSearchInput.addEventListener("focus", () => renderSearchResults(el.siteSearchInput.value));
+  el.siteSearchForm.addEventListener("submit", (event) => {
+    event.preventDefault();
+    const first = searchItems(el.siteSearchInput.value)[0];
+    if (first) window.location.href = first.href;
+    else renderSearchResults(el.siteSearchInput.value);
+  });
+  document.addEventListener("click", (event) => {
+    if (!el.siteSearchForm.contains(event.target)) el.searchResults.hidden = true;
+  });
+}
+
+function bindEvents() {
   el.quickPostForm.addEventListener("submit", submitQuickPost);
   el.quickPostForm.querySelectorAll('input[name="quickKind"]').forEach((input) =>
     input.addEventListener("change", () => {
@@ -343,18 +514,32 @@ function bindQuickComposer() {
       if (liveRoom) el.quickRoom.value = liveRoom;
     })
   );
+  el.showNewestButton.addEventListener("click", () => {
+    state.tab = "new";
+    renderSwitches();
+    renderFeed();
+    el.feedTabs.scrollIntoView({ behavior: "smooth", block: "center" });
+  });
+  bindSearch();
 }
 
 async function initialize() {
-  state.payload = await requestJson("/api/home");
+  [state.payload, state.boardPayload] = await Promise.all([
+    requestJson("/api/home"),
+    requestJson("/api/board"),
+  ]);
   renderRoomTabs(el.roomTabs, state.payload.rooms, state.board);
   populateQuickRooms();
   renderSwitches();
   renderFeed();
+  renderLatestTopics();
   renderHotArenas();
   renderPoliticians();
+  renderTopics();
   renderRooms();
-  bindQuickComposer();
+  buildSearchIndex();
+  renderPopularSearches();
+  bindEvents();
   el.homeCounts.textContent = `${numberFormat.format(state.payload.meta.totalThreads)}スレ · ${numberFormat.format(state.payload.meta.totalComments)}レス`;
   hydrateArenaDetails();
 }
@@ -363,4 +548,5 @@ initialize().catch((error) => {
   console.error(error);
   el.threadFeed.innerHTML = '<p class="empty-state">読み込めませんでした。</p>';
   el.hotArenas.innerHTML = '<p class="empty-state">読み込めませんでした。</p>';
+  el.latestTopics.innerHTML = '<p class="empty-state">読み込めませんでした。</p>';
 });
