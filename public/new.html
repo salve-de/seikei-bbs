@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>新規スレ | 政経板</title>
-    <meta name="description" content="新規スレッド作成" />
+    <title>会場を作る | 政経板</title>
+    <meta name="description" content="政治経済について匿名で話せる会場を作成" />
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/crowd.css" />
   </head>
   <body>
     <div class="app-shell">
@@ -15,56 +16,58 @@
             <span class="brand-mark" aria-hidden="true"></span>
             <span class="brand-copy"><strong>政経板</strong></span>
           </a>
-
           <nav class="primary-nav" aria-label="主要ページ">
-            <a class="nav-link" href="/">掲示板</a>
-            <a class="nav-link" href="/politicians">議員</a>
-            <a class="nav-link is-active" href="/new">スレを立てる</a>
+            <a class="nav-link" href="/">盛り上がり</a>
+            <a class="nav-link" href="/politicians">人物</a>
+            <a class="nav-link is-active" href="/new">会場を作る</a>
           </nav>
         </div>
-
-        <div id="roomTabs" class="room-strip" aria-label="部屋一覧"></div>
+        <div id="roomTabs" class="room-strip" aria-label="板を選ぶ"></div>
       </header>
 
       <main class="page">
         <section class="panel">
           <div class="section-head">
-            <h1>新しいスレを立てる</h1>
+            <div>
+              <p class="eyebrow">Start a room</p>
+              <h1>会場を作る</h1>
+              <p class="sidebar-lead">必須なのはタイトルと最初の一言だけです。名前・立場・対象・出典は必要な時だけ追加してください。</p>
+            </div>
           </div>
 
           <form id="composerForm" class="form-stack">
             <div class="form-grid thread-composer-core">
               <label class="field">
-                <span>部屋</span>
+                <span>どこで話す？</span>
                 <select id="composerRoom"></select>
               </label>
 
               <label class="field field-full">
-                <span>スレタイ</span>
-                <input id="composerTitle" type="text" minlength="4" maxlength="120" required placeholder="何について話す？" />
+                <span>何について話す？</span>
+                <input id="composerTitle" type="text" minlength="4" maxlength="120" required placeholder="例：また現役世代の負担増だけど、これ妥当？" />
               </label>
 
               <label class="field field-full">
-                <span>最初の書き込み</span>
-                <textarea id="composerBody" rows="10" minlength="2" maxlength="4000" required placeholder="思っていること、聞きたいことを書く"></textarea>
+                <span>最初の一言</span>
+                <textarea id="composerBody" rows="10" minlength="2" maxlength="4000" required placeholder="詳しい説明でなくても構いません。思ったこと、聞きたいこと、予想、反論を書いてください。"></textarea>
               </label>
             </div>
 
             <details class="composer-details">
-              <summary>対象・モード・出典などを追加</summary>
+              <summary>名前・対象・URL・会話モードを追加する</summary>
               <div class="form-grid composer-options">
-                <label class="field"><span>名前</span><input id="composerAuthor" type="text" maxlength="32" placeholder="名無しさん" /></label>
+                <label class="field"><span>名前</span><input id="composerAuthor" type="text" maxlength="32" placeholder="空欄なら名無しさん" /></label>
                 <label class="field"><span>会話モード</span><select id="composerMode"><option value="mixed">ごちゃ混ぜ</option><option value="same-side">同じ側で話す</option><option value="opposition-welcome">反対意見歓迎</option></select></label>
-                <label class="field"><span>対象</span><select id="composerTargetType"></select></label>
+                <label class="field"><span>関連する対象</span><select id="composerTargetType"></select></label>
                 <label id="composerPoliticianField" class="field"><span>議員</span><select id="composerTargetId"></select></label>
-                <label id="composerTargetLabelField" class="field field-full"><span>政策・政党・地域・指標名</span><input id="composerTargetLabel" type="text" maxlength="60" /></label>
-                <label class="field field-full"><span>補足（一覧用）</span><textarea id="composerSummary" rows="2" maxlength="240"></textarea></label>
-                <label class="field field-full"><span>問い</span><input id="composerDecisionPrompt" type="text" maxlength="180" /></label>
+                <label id="composerTargetLabelField" class="field field-full"><span>政策・政党・企業・地域・指標名</span><input id="composerTargetLabel" type="text" maxlength="60" /></label>
+                <label class="field field-full"><span>一覧に出す補足</span><textarea id="composerSummary" rows="2" maxlength="240" placeholder="空欄なら最初の一言を使います"></textarea></label>
+                <label class="field field-full"><span>みんなへの問い</span><input id="composerDecisionPrompt" type="text" maxlength="180" placeholder="任意" /></label>
                 <fieldset class="field field-full"><legend>関係する分野</legend><div id="composerImpacts" class="check-grid"></div></fieldset>
-                <label class="field"><span>タグ</span><input id="composerTags" type="text" /></label>
-                <label class="field"><span>ニュース・資料URL</span><input id="composerSourceUrl" type="url" /></label>
-                <label class="field"><span>出典の種類</span><select id="composerSourceKind"><option value="other">その他</option><option value="official">公的機関・一次資料</option><option value="news">報道</option><option value="analysis">解説・分析</option></select></label>
-                <label class="checkbox-line field-full"><input id="composerMegathread" type="checkbox" /><span>メガスレ</span></label>
+                <label class="field"><span>タグ</span><input id="composerTags" type="text" placeholder="予想, 実況, 資料など" /></label>
+                <label class="field"><span>記事・公式資料URL</span><input id="composerSourceUrl" type="url" placeholder="任意" /></label>
+                <label class="field"><span>URLの種類</span><select id="composerSourceKind"><option value="other">その他</option><option value="official">公的機関・一次資料</option><option value="news">報道</option><option value="analysis">解説・分析</option></select></label>
+                <label class="checkbox-line field-full"><input id="composerMegathread" type="checkbox" /><span>実況・継続用の大きな会場にする</span></label>
               </div>
             </details>
 
@@ -72,14 +75,17 @@
 
             <div class="form-actions">
               <a class="button button-muted" href="/">戻る</a>
-              <button class="button button-primary" type="submit">作成</button>
+              <button class="button button-primary" type="submit">会場を公開する</button>
             </div>
           </form>
         </section>
 
         <section id="duplicateSection" class="panel" hidden>
           <div class="section-head">
-            <h2>重複候補</h2>
+            <div>
+              <h2>似た会場があります</h2>
+              <p class="sidebar-lead">既存の会話へ混ざる方が、返事をもらいやすい場合があります。</p>
+            </div>
           </div>
           <div id="duplicateList" class="flat-list"></div>
         </section>
