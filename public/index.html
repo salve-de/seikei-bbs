@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>政治と経済の匿名掲示板 | 政経板</title>
-    <meta name="description" content="議員、政策、政治、経済について匿名で語る掲示板" />
+    <title>政経板 | 政治経済の本音が集まる匿名コミュニティ</title>
+    <meta name="description" content="政治経済で今どこが盛り上がっているかを見つけ、登録なしで匿名参加できる掲示板" />
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/crowd.css" />
   </head>
   <body>
     <div class="app-shell">
@@ -16,30 +17,102 @@
             <span class="brand-copy"><strong>政経板</strong></span>
           </a>
           <nav class="primary-nav" aria-label="主要ページ">
-            <a class="nav-link is-active" href="/">掲示板</a>
-            <a class="nav-link" href="/politicians">議員</a>
-            <a class="nav-link" href="/new">スレを立てる</a>
+            <a class="nav-link is-active" href="/">盛り上がり</a>
+            <a class="nav-link" href="/politicians">人物</a>
+            <a class="nav-link" href="/new">会場を作る</a>
           </nav>
         </div>
+        <div id="roomTabs" class="room-strip" aria-label="板を選ぶ"></div>
       </header>
 
       <main class="page">
-        <h1 class="sr-only">政経板</h1>
-        <nav id="boardSwitch" class="board-switch" aria-label="板を選ぶ"></nav>
+        <section class="crowd-intro" aria-labelledby="crowdTitle">
+          <div class="crowd-intro-copy">
+            <p class="eyebrow">政治経済の観客席</p>
+            <h1 id="crowdTitle">今、どこが沸いてる？</h1>
+            <p>世間の本音を覗く。気になったら一言混ざる。返事と論争の続きを見に戻る。難しい知識も登録も要りません。</p>
+            <div class="crowd-intro-signal" aria-label="このサイトでできること">
+              <span>登録なしで読む</span>
+              <span>匿名で一言</span>
+              <span>返信と未読が分かる</span>
+              <span>政治・経済・市場・実況</span>
+            </div>
+          </div>
+
+          <form id="quickPostForm" class="quick-post-card">
+            <div class="quick-post-head">
+              <div>
+                <span>30秒で会場を作る</span>
+                <h2>今、言いたいことは？</h2>
+              </div>
+              <a href="/new">詳細投稿</a>
+            </div>
+
+            <div class="quick-kind-row" aria-label="投稿の種類">
+              <label><input type="radio" name="quickKind" value="一言" checked /><span>一言</span></label>
+              <label><input type="radio" name="quickKind" value="質問" /><span>質問</span></label>
+              <label><input type="radio" name="quickKind" value="予想" /><span>予想</span></label>
+              <label><input type="radio" name="quickKind" value="資料投下" /><span>URL・資料</span></label>
+              <label><input type="radio" name="quickKind" value="実況" /><span>実況</span></label>
+            </div>
+
+            <label class="sr-only" for="quickBody">投稿内容</label>
+            <textarea id="quickBody" maxlength="2000" required placeholder="例：また現役世代の負担増だけど、これ妥当なの？"></textarea>
+            <div class="quick-post-options">
+              <label>
+                <span class="sr-only">投稿先</span>
+                <select id="quickRoom" aria-label="投稿先の板"></select>
+              </label>
+              <label>
+                <span class="sr-only">元情報URL</span>
+                <input id="quickSource" type="url" placeholder="記事・公式資料URL（任意）" />
+              </label>
+            </div>
+            <p id="quickPostFeedback" class="form-feedback" hidden></p>
+            <div class="quick-post-actions">
+              <small>タイトルは本文から自動作成します。名前・立場・出典は後から追加できます。</small>
+              <button id="quickSubmit" class="button button-primary quick-submit" type="submit">会場を作る</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="arena-section" aria-labelledby="hotArenaTitle">
+          <div class="arena-section-head">
+            <div>
+              <p class="eyebrow">Live crowd</p>
+              <h2 id="hotArenaTitle">今、沸いている会場</h2>
+            </div>
+            <p>参加者・返信・更新速度から自動表示</p>
+          </div>
+          <div id="hotArenas" class="hot-arena-grid"></div>
+        </section>
+
+        <nav id="boardSwitch" class="board-switch" aria-label="話題の範囲"></nav>
 
         <div class="forum-layout">
           <section class="forum-feed">
-            <div class="feed-toolbar"><div id="feedTabs" class="segmented-control compact" aria-label="並び順"></div><span id="homeCounts" class="section-note"></span></div>
+            <div class="feed-toolbar">
+              <div id="feedTabs" class="segmented-control compact" aria-label="並び順"></div>
+              <span id="homeCounts" class="section-note"></span>
+            </div>
             <div id="threadFeed" class="conversation-feed"></div>
           </section>
+
           <aside class="forum-sidebar">
-            <section class="panel"><div class="section-head"><h2>議員別の掲示板</h2></div><div id="featuredPoliticians" class="politician-list"></div></section>
-            <section class="panel"><div class="section-head"><h2>細かいテーマ</h2></div><div id="roomDirectory"></div></section>
+            <section class="panel">
+              <div class="section-head"><h2>人が集まる人物</h2></div>
+              <p class="sidebar-lead">ニュースを網羅するのではなく、人物ごとに世間の反応と会話を蓄積します。</p>
+              <div id="featuredPoliticians" class="politician-list"></div>
+            </section>
+            <section class="panel">
+              <div class="section-head"><h2>細かいテーマ</h2></div>
+              <div id="roomDirectory"></div>
+            </section>
           </aside>
         </div>
       </main>
-
     </div>
+
     <script src="/shared.js"></script>
     <script src="/home.js"></script>
   </body>
