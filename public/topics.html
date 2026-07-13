@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>テーマ | 政経板</title>
+    <meta name="description" content="政治経済のテーマ別掲示板" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/crowd.css" />
+    <link rel="stylesheet" href="/entity.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="site-header">
+        <div class="site-header-main">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>政経板</strong></span></a>
+          <nav class="primary-nav" aria-label="主要ページ">
+            <a class="nav-link" href="/">盛り上がり</a>
+            <a class="nav-link" href="/politicians">人物</a>
+            <a class="nav-link is-active" href="/topics.html">テーマ</a>
+            <a class="nav-link" href="/new">会場を作る</a>
+          </nav>
+        </div>
+        <div id="roomTabs" class="room-strip" aria-label="板を選ぶ"></div>
+      </header>
+
+      <main class="page">
+        <section class="directory-head">
+          <div><h1>テーマ</h1></div>
+        </section>
+        <div id="topicDirectory" class="topic-directory"></div>
+      </main>
+    </div>
+
+    <script src="/shared.js"></script>
+    <script src="/topic-definitions.js"></script>
+    <script src="/topics.js"></script>
+  </body>
+</html>
