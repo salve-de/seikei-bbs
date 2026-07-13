@@ -37,14 +37,14 @@
         </article>
 
         <details class="fuel-details" open>
-          <summary>この会場の元ネタ・最初の投下</summary>
+          <summary>元ネタ・最初の投稿</summary>
           <section id="threadSource" class="source-block"></section>
         </details>
 
         <div class="conversation-layout">
           <section class="conversation-panel">
             <div class="conversation-head">
-              <div><p class="eyebrow">Crowd</p><h2 id="conversationTitle">世間の反応</h2></div>
+              <div><h2 id="conversationTitle">書き込み</h2></div>
               <span id="discussionSummary" class="conversation-count"></span>
             </div>
             <div id="conversationFilter" class="conversation-filter"></div>
@@ -53,13 +53,9 @@
 
           <aside class="discussion-composer">
             <form id="commentForm" class="composer-panel">
-              <div>
-                <p class="eyebrow">Join</p>
-                <h2>一言混ざる</h2>
-                <p class="sidebar-lead">本文だけで投稿できます。名前や立場は不要です。</p>
-              </div>
+              <div><h2>書き込む</h2></div>
               <div id="replyContext" class="reply-context" hidden></div>
-              <label class="field composer-body"><span>本文</span><textarea id="commentBody" rows="8" maxlength="2000" placeholder="思ったことを、そのまま書く" required></textarea></label>
+              <label class="field composer-body"><span>本文</span><textarea id="commentBody" rows="8" maxlength="2000" placeholder="思ったことを書く" required></textarea></label>
               <details class="composer-details">
                 <summary>立場・名前・出典を追加する</summary>
                 <div class="composer-options">
@@ -71,7 +67,7 @@
                 </div>
               </details>
               <p id="commentFeedback" class="form-feedback" hidden></p>
-              <button id="commentSubmit" class="button button-primary" type="submit">匿名で投稿する</button>
+              <button id="commentSubmit" class="button button-primary" type="submit">投稿する</button>
             </form>
           </aside>
         </div>
