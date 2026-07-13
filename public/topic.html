@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>テーマ | 政経板</title>
+    <meta name="description" content="政治経済のテーマ別掲示板" />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/crowd.css" />
+    <link rel="stylesheet" href="/entity.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="site-header">
+        <div class="site-header-main">
+          <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>政経板</strong></span></a>
+          <nav class="primary-nav" aria-label="主要ページ">
+            <a class="nav-link" href="/">盛り上がり</a>
+            <a class="nav-link" href="/politicians">人物</a>
+            <a class="nav-link is-active" href="/topics.html">テーマ</a>
+            <a class="nav-link" href="/new">会場を作る</a>
+          </nav>
+        </div>
+        <div id="roomTabs" class="room-strip" aria-label="板を選ぶ"></div>
+      </header>
+
+      <main class="page entity-page">
+        <nav class="breadcrumb" aria-label="パンくず">
+          <a href="/">ホーム</a><span>/</span><a href="/topics.html">テーマ</a>
+        </nav>
+
+        <section id="topicProfile" class="topic-profile-card"></section>
+
+        <div class="entity-board-layout">
+          <section class="entity-board-main">
+            <div class="section-head entity-board-headline">
+              <div>
+                <h1 id="topicBoardTitle">掲示板</h1>
+                <p id="topicBoardMeta" class="section-note"></p>
+              </div>
+              <span id="topicThreadCount" class="count-label">0件</span>
+            </div>
+            <div id="topicThreads" class="conversation-feed"></div>
+          </section>
+
+          <aside class="entity-composer-card">
+            <form id="topicQuickForm" class="composer-panel">
+              <div><h2>このテーマについて投稿</h2></div>
+              <label class="field composer-body">
+                <span>本文</span>
+                <textarea id="topicQuickBody" rows="7" maxlength="2000" required placeholder="意見、質問、予想を書く"></textarea>
+              </label>
+              <label class="field">
+                <span>URL</span>
+                <input id="topicQuickSource" type="url" placeholder="任意" />
+              </label>
+              <p id="topicQuickFeedback" class="form-feedback" hidden></p>
+              <button id="topicQuickSubmit" class="button button-primary" type="submit">投稿する</button>
+              <a id="topicNewThread" class="text-link" href="/new">詳細設定で投稿</a>
+            </form>
+          </aside>
+        </div>
+      </main>
+    </div>
+
+    <script src="/shared.js"></script>
+    <script src="/topic-definitions.js"></script>
+    <script src="/topic.js"></script>
+  </body>
+</html>
