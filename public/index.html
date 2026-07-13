@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>政経板 | 政治経済の本音が集まる匿名コミュニティ</title>
-    <meta name="description" content="政治経済で今どこが盛り上がっているかを見つけ、登録なしで匿名参加できる掲示板" />
+    <title>政経板 | 政治経済の匿名掲示板</title>
+    <meta name="description" content="政治・経済について匿名で話せる掲示板" />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/crowd.css" />
   </head>
@@ -28,24 +28,13 @@
       <main class="page">
         <section class="crowd-intro" aria-labelledby="crowdTitle">
           <div class="crowd-intro-copy">
-            <p class="eyebrow">政治経済の観客席</p>
             <h1 id="crowdTitle">今、どこが沸いてる？</h1>
-            <p>世間の本音を覗く。気になったら一言混ざる。返事と論争の続きを見に戻る。難しい知識も登録も要りません。</p>
-            <div class="crowd-intro-signal" aria-label="このサイトでできること">
-              <span>登録なしで読む</span>
-              <span>匿名で一言</span>
-              <span>返信と未読が分かる</span>
-              <span>政治・経済・市場・実況</span>
-            </div>
           </div>
 
           <form id="quickPostForm" class="quick-post-card">
             <div class="quick-post-head">
-              <div>
-                <span>30秒で会場を作る</span>
-                <h2>今、言いたいことは？</h2>
-              </div>
-              <a href="/new">詳細投稿</a>
+              <div><h2>投稿する</h2></div>
+              <a href="/new">詳細</a>
             </div>
 
             <div class="quick-kind-row" aria-label="投稿の種類">
@@ -57,7 +46,7 @@
             </div>
 
             <label class="sr-only" for="quickBody">投稿内容</label>
-            <textarea id="quickBody" maxlength="2000" required placeholder="例：また現役世代の負担増だけど、これ妥当なの？"></textarea>
+            <textarea id="quickBody" maxlength="2000" required placeholder="今、言いたいことを書く"></textarea>
             <div class="quick-post-options">
               <label>
                 <span class="sr-only">投稿先</span>
@@ -65,12 +54,11 @@
               </label>
               <label>
                 <span class="sr-only">元情報URL</span>
-                <input id="quickSource" type="url" placeholder="記事・公式資料URL（任意）" />
+                <input id="quickSource" type="url" placeholder="URL（任意）" />
               </label>
             </div>
             <p id="quickPostFeedback" class="form-feedback" hidden></p>
             <div class="quick-post-actions">
-              <small>タイトルは本文から自動作成します。名前・立場・出典は後から追加できます。</small>
               <button id="quickSubmit" class="button button-primary quick-submit" type="submit">会場を作る</button>
             </div>
           </form>
@@ -78,11 +66,7 @@
 
         <section class="arena-section" aria-labelledby="hotArenaTitle">
           <div class="arena-section-head">
-            <div>
-              <p class="eyebrow">Live crowd</p>
-              <h2 id="hotArenaTitle">今、沸いている会場</h2>
-            </div>
-            <p>参加者・返信・更新速度から自動表示</p>
+            <div><h2 id="hotArenaTitle">今、沸いている会場</h2></div>
           </div>
           <div id="hotArenas" class="hot-arena-grid"></div>
         </section>
@@ -100,12 +84,11 @@
 
           <aside class="forum-sidebar">
             <section class="panel">
-              <div class="section-head"><h2>人が集まる人物</h2></div>
-              <p class="sidebar-lead">ニュースを網羅するのではなく、人物ごとに世間の反応と会話を蓄積します。</p>
+              <div class="section-head"><h2>人物</h2></div>
               <div id="featuredPoliticians" class="politician-list"></div>
             </section>
             <section class="panel">
-              <div class="section-head"><h2>細かいテーマ</h2></div>
+              <div class="section-head"><h2>テーマ</h2></div>
               <div id="roomDirectory"></div>
             </section>
           </aside>
