@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>議員 | 政経板</title>
-    <meta name="description" content="議員に紐づく議論と一次情報" />
+    <title>人物 | 政経板</title>
+    <meta name="description" content="人物に関連する会話" />
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/crowd.css" />
   </head>
   <body>
     <div class="app-shell">
@@ -16,33 +17,33 @@
             <span class="brand-copy"><strong>政経板</strong></span>
           </a>
           <nav class="primary-nav" aria-label="主要ページ">
-            <a class="nav-link" href="/">掲示板</a>
-            <a class="nav-link is-active" href="/politicians">議員</a>
-            <a class="nav-link" href="/new">新規スレ</a>
+            <a class="nav-link" href="/">盛り上がり</a>
+            <a class="nav-link is-active" href="/politicians">人物</a>
+            <a class="nav-link" href="/new">会場を作る</a>
           </nav>
         </div>
-        <div id="roomTabs" class="room-strip" aria-label="部屋一覧"></div>
+        <div id="roomTabs" class="room-strip" aria-label="板を選ぶ"></div>
       </header>
 
       <main class="page">
         <nav class="breadcrumb" aria-label="パンくず">
-          <a href="/">ホーム</a><span>/</span><a href="/politicians">議員</a>
+          <a href="/">ホーム</a><span>/</span><a href="/politicians">人物</a>
         </nav>
 
         <section class="entity-board-head">
-          <div><h1 id="politicianBoardTitle">議員について語る</h1><p id="politicianBoardMeta"></p></div>
-          <a id="politicianNewThread" class="button button-primary" href="/new">この議員でスレを立てる</a>
+          <div><h1 id="politicianBoardTitle">人物</h1><p id="politicianBoardMeta"></p></div>
+          <a id="politicianNewThread" class="button button-primary" href="/new">会場を作る</a>
         </section>
 
         <section class="panel">
-            <div class="section-head">
-              <h2>動いているスレ</h2>
-              <span id="politicianThreadCount" class="count-label">0</span>
-            </div>
-            <div id="politicianThreads" class="conversation-feed"></div>
+          <div class="section-head">
+            <h2>会場</h2>
+            <span id="politicianThreadCount" class="count-label">0</span>
+          </div>
+          <div id="politicianThreads" class="conversation-feed"></div>
         </section>
 
-        <details class="profile-details"><summary>公式プロフィールを確認</summary><section id="politicianProfile" class="politician-profile"></section></details>
+        <details class="profile-details"><summary>プロフィール</summary><section id="politicianProfile" class="politician-profile"></section></details>
       </main>
     </div>
 
