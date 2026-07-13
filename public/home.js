@@ -50,7 +50,6 @@ const el = Object.fromEntries(ids.map((id) => [id, document.getElementById(id)])
 const tabs = [
   { id: "hot", label: "勢い" },
   { id: "new", label: "最新" },
-  { id: "arguing", label: "言い合い中" },
   { id: "live", label: "速報・実況" },
   { id: "source", label: "資料あり" },
   { id: "unanswered", label: "返信なし" },
@@ -68,7 +67,6 @@ function allThreads() {
     state.boardPayload?.threads,
     state.payload?.featured?.hotThreads,
     state.payload?.featured?.newestThreads,
-    state.payload?.featured?.arguingThreads,
     state.payload?.featured?.dailyIssues,
   ];
   for (const group of groups) {
@@ -93,7 +91,6 @@ function activeThreads() {
   let threads;
 
   if (state.tab === "new") threads = state.payload.featured.newestThreads || [];
-  else if (state.tab === "arguing") threads = state.payload.featured.arguingThreads || [];
   else if (state.tab === "watch") threads = everyThread.filter((thread) => isWatched(thread.id));
   else if (state.tab === "unanswered") threads = everyThread.filter((thread) => Number(thread.commentCount || 0) === 0);
   else if (state.tab === "source") threads = everyThread.filter((thread) => Boolean(thread.sourceUrl));
@@ -153,13 +150,10 @@ function renderSwitches() {
 function threadSignals(thread) {
   const signals = [];
   const liveRooms = new Set(roomsForBoard("live"));
-  if (state.payload.featured.arguingThreads?.some((item) => item.id === thread.id)) {
-    signals.push('<span class="crowd-status is-hot">言い合い中</span>');
-  }
   if (liveRooms.has(thread.room) || (thread.tags || []).includes("実況")) {
     signals.push('<span class="crowd-status is-live">実況</span>');
   }
-  if (thread.sourceUrl) signals.push('<span class="crowd-status is-source">元情報あり</span>');
+  if (thread.sourceUrl) signals.push('<span class="crowd-status is-source">資料あり</span>');
   return signals.join("");
 }
 
@@ -203,29 +197,27 @@ function renderLatestTopics() {
     el.latestTopics.innerHTML = '<p class="empty-state">最新の投稿はありません。</p>';
     return;
   }
-  el.latestTopics.innerHTML = threads.map((thread) => `<a class="current-topic-card" href="/thread/${thread.id}">
-    <div class="current-topic-meta">
-      <span>${escapeHtml(roomLabel(state.payload.rooms, thread.room))}</span>
-      <span>${relativeTime(thread.lastActivityAt)}</span>
-      ${threadSignals(thread)}
-    </div>
-    <strong>${escapeHtml(thread.title)}</strong>
-    <div class="current-topic-meta"><span>${numberFormat.format(thread.commentCount || 0)}レス</span><span>${numberFormat.format(thread.participantCount || 0)}人</span></div>
-  </a>`).join("");
+
+  el.latestTopics.innerHTML = threads
+    .map(
+      (thread) => `<a class="current-topic-card" href="/thread/${thread.id}">
+        <div class="current-topic-meta">
+          <span>${escapeHtml(roomLabel(state.payload.rooms, thread.room))}</span>
+          <span>${relativeTime(thread.lastActivityAt)}</span>
+          ${threadSignals(thread)}
+        </div>
+        <strong>${escapeHtml(thread.title)}</strong>
+        <div class="current-topic-meta"><span>${numberFormat.format(thread.commentCount || 0)}レス</span><span>${numberFormat.format(thread.participantCount || 0)}人</span></div>
+      </a>`
+    )
+    .join("");
 }
 
-function pickVoices(detail) {
-  const comments = [...(detail?.comments || [])].sort((a, b) => Number(b.number || 0) - Number(a.number || 0));
-  if (!comments.length) return [];
-  const first = comments[0];
-  const opposite = comments.find(
-    (comment) => comment.id !== first.id && first.stance && comment.stance && comment.stance !== first.stance
-  );
-  const second = opposite || comments.find((comment) => comment.id !== first.id);
-  return [first, second].filter(Boolean).map((comment, index) => ({
-    body: truncate(comment.body, 94),
-    opposite: index === 1 && Boolean(opposite),
-  }));
+function recentVoices(detail) {
+  return [...(detail?.comments || [])]
+    .sort((a, b) => Number(b.number || 0) - Number(a.number || 0))
+    .slice(0, 2)
+    .map((comment) => ({ body: truncate(comment.body, 94) }));
 }
 
 function renderHotArenas() {
@@ -238,21 +230,21 @@ function renderHotArenas() {
   el.hotArenas.innerHTML = threads
     .map((thread, index) => {
       const detail = state.arenaDetails.get(thread.id);
-      const voices = pickVoices(detail);
-      const fallback = truncate(thread.latestExcerpt || thread.summary || "最初の意見を待っています。", 94);
-      const renderedVoices = (voices.length ? voices : [{ body: fallback, opposite: false }])
-        .map((voice) => `<div class="arena-voice${voice.opposite ? " is-opposite" : ""}">「${escapeHtml(voice.body)}」</div>`)
+      const voices = recentVoices(detail);
+      const fallback = truncate(thread.latestExcerpt || thread.summary || "最初の投稿を待っています。", 94);
+      const renderedVoices = (voices.length ? voices : [{ body: fallback }])
+        .map((voice) => `<div class="arena-voice">「${escapeHtml(voice.body)}」</div>`)
         .join("");
 
       return `<a class="hot-arena-card" href="/thread/${thread.id}">
         <div class="hot-arena-main">
-          <div class="hot-arena-kicker"><span>現在 ${index + 1}位</span><span>${escapeHtml(roomLabel(state.payload.rooms, thread.room))}</span></div>
+          <div class="hot-arena-kicker"><span>${index + 1}位</span><span>${escapeHtml(roomLabel(state.payload.rooms, thread.room))}</span></div>
           <h3>${escapeHtml(thread.title)}</h3>
           <div class="hot-arena-meta">${renderTarget(thread.target)} ${threadSignals(thread)}</div>
         </div>
         <div class="arena-voices">${renderedVoices}</div>
         <div class="hot-arena-stats">
-          <span><strong>${numberFormat.format(thread.participantCount || 0)}</strong>人参加</span>
+          <span><strong>${numberFormat.format(thread.participantCount || 0)}</strong>人</span>
           <span><strong>${numberFormat.format(thread.commentCount || 0)}</strong>レス</span>
           <span>更新 ${relativeTime(thread.lastActivityAt)}</span>
         </div>
@@ -299,6 +291,7 @@ function renderPoliticians() {
     el.featuredPoliticians.innerHTML = '<p class="sidebar-empty">投稿がある政治家はまだいません。</p>';
     return;
   }
+
   el.featuredPoliticians.innerHTML = politicians
     .map(
       (politician) => `<a class="politician-list-row" href="/politician/${politician.id}">
@@ -311,10 +304,11 @@ function renderPoliticians() {
 }
 
 function topicThreads(topic) {
-  return allThreads().filter((thread) =>
-    thread.target?.id === topic.id ||
-    thread.target?.label === topic.targetLabel ||
-    (thread.tags || []).includes(topic.name)
+  return allThreads().filter(
+    (thread) =>
+      thread.target?.id === topic.id ||
+      thread.target?.label === topic.targetLabel ||
+      (thread.tags || []).includes(topic.name)
   );
 }
 
@@ -335,10 +329,13 @@ function renderTopics() {
     el.featuredTopics.innerHTML = '<p class="sidebar-empty">投稿があるテーマはまだありません。</p>';
     return;
   }
-  el.featuredTopics.innerHTML = topics.map((topic) => {
-    const comments = topic.threads.reduce((sum, thread) => sum + Number(thread.commentCount || 0), 0);
-    return `<a class="sidebar-link" href="/topic.html?id=${encodeURIComponent(topic.id)}"><strong>${escapeHtml(topic.name)}</strong><span>${numberFormat.format(comments)}レス</span></a>`;
-  }).join("");
+
+  el.featuredTopics.innerHTML = topics
+    .map((topic) => {
+      const comments = topic.threads.reduce((sum, thread) => sum + Number(thread.commentCount || 0), 0);
+      return `<a class="sidebar-link" href="/topic.html?id=${encodeURIComponent(topic.id)}"><strong>${escapeHtml(topic.name)}</strong><span>${numberFormat.format(comments)}レス</span></a>`;
+    })
+    .join("");
 }
 
 function populateQuickRooms() {
@@ -404,6 +401,7 @@ async function submitQuickPost(event) {
 
 function buildSearchIndex() {
   const items = [];
+
   for (const politician of state.boardPayload.politicians || []) {
     items.push({
       type: "政治家",
@@ -414,6 +412,7 @@ function buildSearchIndex() {
       score: Number(politician.activityCount || 0),
     });
   }
+
   for (const topic of window.TopicDefinitions || []) {
     const activity = activeTopics().find((item) => item.id === topic.id);
     items.push({
@@ -425,6 +424,7 @@ function buildSearchIndex() {
       score: Number(activity?.score || 0),
     });
   }
+
   for (const thread of allThreads()) {
     items.push({
       type: "スレッド",
@@ -435,6 +435,7 @@ function buildSearchIndex() {
       score: Number(thread.heat || 0) + Number(thread.commentCount || 0),
     });
   }
+
   state.searchIndex = items;
 }
 
@@ -454,16 +455,22 @@ function renderSearchResults(query) {
     el.searchResults.innerHTML = "";
     return;
   }
+
   el.searchResults.hidden = false;
   if (!results.length) {
     el.searchResults.innerHTML = '<p class="empty-state">見つかりませんでした。</p>';
     return;
   }
-  el.searchResults.innerHTML = results.map((item) => `<a class="search-result-row" href="${item.href}">
-    <span class="search-result-type">${escapeHtml(item.type)}</span>
-    <span class="search-result-copy"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.subtitle)}</span></span>
-    <span aria-hidden="true">›</span>
-  </a>`).join("");
+
+  el.searchResults.innerHTML = results
+    .map(
+      (item) => `<a class="search-result-row" href="${item.href}">
+        <span class="search-result-type">${escapeHtml(item.type)}</span>
+        <span class="search-result-copy"><strong>${escapeHtml(item.title)}</strong><span>${escapeHtml(item.subtitle)}</span></span>
+        <span aria-hidden="true">›</span>
+      </a>`
+    )
+    .join("");
 }
 
 function renderPopularSearches() {
@@ -474,6 +481,7 @@ function renderPopularSearches() {
   for (const topic of activeTopics().slice(0, 3)) {
     candidates.push({ label: topic.name, href: `/topic.html?id=${encodeURIComponent(topic.id)}`, score: topic.score });
   }
+
   const seen = new Set();
   const popular = candidates
     .sort((left, right) => right.score - left.score)
@@ -488,7 +496,10 @@ function renderPopularSearches() {
     el.popularSearches.innerHTML = '<span>人気の人物・テーマは投稿状況に応じて表示されます。</span>';
     return;
   }
-  el.popularSearches.innerHTML = `<span>人気:</span>${popular.map((item) => `<a class="popular-chip" href="${item.href}">${escapeHtml(item.label)}</a>`).join("")}`;
+
+  el.popularSearches.innerHTML = `<span>人気:</span>${popular
+    .map((item) => `<a class="popular-chip" href="${item.href}">${escapeHtml(item.label)}</a>`)
+    .join("")}`;
 }
 
 function bindSearch() {
