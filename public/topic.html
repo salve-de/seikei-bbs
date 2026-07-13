@@ -3,8 +3,8 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>政治家 | 政経板</title>
-    <meta name="description" content="政治家のプロフィールと関連掲示板" />
+    <title>政策・テーマ | 政経板</title>
+    <meta name="description" content="政治経済の政策・テーマ別掲示板" />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/crowd.css" />
     <link rel="stylesheet" href="/entity.css" />
@@ -16,8 +16,8 @@
           <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>政経板</strong></span></a>
           <nav class="primary-nav" aria-label="主要ページ">
             <a class="nav-link" href="/">時事・盛り上がり</a>
-            <a class="nav-link is-active" href="/politicians">政治家</a>
-            <a class="nav-link" href="/topics.html">政策・テーマ</a>
+            <a class="nav-link" href="/politicians">政治家</a>
+            <a class="nav-link is-active" href="/topics.html">政策・テーマ</a>
             <a class="nav-link" href="/new">スレッドを立てる</a>
           </nav>
         </div>
@@ -26,41 +26,37 @@
 
       <main class="page entity-page">
         <nav class="breadcrumb" aria-label="パンくず">
-          <a href="/">ホーム</a><span>/</span><a href="/politicians">政治家</a>
+          <a href="/">ホーム</a><span>/</span><a href="/topics.html">政策・テーマ</a>
         </nav>
 
-        <section id="politicianProfile" class="entity-profile-card"></section>
+        <section id="topicProfile" class="topic-profile-card"></section>
 
         <div class="entity-board-layout">
           <section class="entity-board-main">
             <div class="section-head entity-board-headline">
               <div>
-                <h1 id="politicianBoardTitle">掲示板</h1>
-                <p id="politicianBoardMeta" class="section-note"></p>
+                <h1 id="topicBoardTitle">掲示板</h1>
+                <p id="topicBoardMeta" class="section-note"></p>
               </div>
-              <span id="politicianThreadCount" class="count-label">0件</span>
+              <span id="topicThreadCount" class="count-label">0件</span>
             </div>
-            <div id="politicianThreads" class="conversation-feed"></div>
+            <div id="topicThreads" class="conversation-feed"></div>
           </section>
 
           <aside class="entity-composer-card">
-            <form id="politicianQuickForm" class="composer-panel">
-              <div><h2>この政治家について投稿</h2></div>
+            <form id="topicQuickForm" class="composer-panel">
+              <div><h2>このテーマについて投稿</h2></div>
               <label class="field composer-body">
                 <span>本文</span>
-                <textarea id="politicianQuickBody" rows="7" maxlength="2000" required placeholder="言いたいこと、質問、予想を書く"></textarea>
-              </label>
-              <label class="field">
-                <span>投稿先</span>
-                <select id="politicianQuickRoom"></select>
+                <textarea id="topicQuickBody" rows="7" maxlength="2000" required placeholder="意見、質問、予想を書く"></textarea>
               </label>
               <label class="field">
                 <span>URL</span>
-                <input id="politicianQuickSource" type="url" placeholder="任意" />
+                <input id="topicQuickSource" type="url" placeholder="任意" />
               </label>
-              <p id="politicianQuickFeedback" class="form-feedback" hidden></p>
-              <button id="politicianQuickSubmit" class="button button-primary" type="submit">投稿する</button>
-              <a id="politicianNewThread" class="text-link" href="/new">詳細設定で投稿</a>
+              <p id="topicQuickFeedback" class="form-feedback" hidden></p>
+              <button id="topicQuickSubmit" class="button button-primary" type="submit">投稿する</button>
+              <a id="topicNewThread" class="text-link" href="/new">詳細設定で投稿</a>
             </form>
           </aside>
         </div>
@@ -68,6 +64,7 @@
     </div>
 
     <script src="/shared.js"></script>
-    <script src="/politician.js"></script>
+    <script src="/topic-definitions.js"></script>
+    <script src="/topic.js"></script>
   </body>
 </html>

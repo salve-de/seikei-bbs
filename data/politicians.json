@@ -67,8 +67,19 @@
     "group": "立憲民主・無所属",
     "groupShort": "立憲",
     "district": "比例代表",
-    "sourceAsOf": "2026-07-07",
-    "verifiedAt": "2026-07-10",
-    "sourceUrl": "https://www.sangiin.go.jp/japanese/joho1/kousei/giin/profile/7004060.htm"
+    "termCount": 5,
+    "birthDate": "1967-11-28",
+    "birthPlace": "東京都",
+    "education": "青山学院大学 法学部 卒業",
+    "career": "タレント、報道キャスター",
+    "role": "立憲民主党 国土交通部会 部会長",
+    "committees": [
+      "国土交通委員会／筆頭理事",
+      "懲罰委員会／委員"
+    ],
+    "websiteUrl": "https://renho.jp/",
+    "sourceAsOf": "2026-07-13",
+    "verifiedAt": "2026-07-13",
+    "sourceUrl": "https://cdp-japan.jp/member/6232"
   }
 ]

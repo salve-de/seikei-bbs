@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>部屋 | 政経板</title>
-    <meta name="description" content="部屋別スレ一覧" />
+    <title>板 | 政経板</title>
+    <meta name="description" content="板別スレッド一覧" />
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/crowd.css" />
   </head>
   <body>
     <div class="app-shell">
@@ -17,31 +18,27 @@
           </a>
 
           <nav class="primary-nav" aria-label="主要ページ">
-            <a class="nav-link" href="/">掲示板</a>
-            <a class="nav-link" href="/politicians">議員</a>
-            <a class="nav-link" href="/new">新規スレ</a>
+            <a class="nav-link" href="/">時事・盛り上がり</a>
+            <a class="nav-link" href="/politicians">政治家</a>
+            <a class="nav-link" href="/topics.html">政策・テーマ</a>
+            <a class="nav-link" href="/new">スレッドを立てる</a>
           </nav>
         </div>
 
-        <div id="roomTabs" class="room-strip" aria-label="部屋一覧"></div>
+        <div id="roomTabs" class="room-strip" aria-label="板一覧"></div>
       </header>
 
       <main class="page">
         <section class="panel">
           <div class="section-head">
-            <h1 id="roomTitle">部屋</h1>
-            <a id="roomNewThreadLink" class="button button-primary" href="/new">新規スレ</a>
+            <h1 id="roomTitle">板</h1>
+            <a id="roomNewThreadLink" class="button button-primary" href="/new">スレッドを立てる</a>
           </div>
           <div id="roomMeta" class="meta-strip"></div>
           <div class="toolbar toolbar-row">
             <label class="field search-field">
-              <span class="sr-only">部屋内検索</span>
-              <input
-                id="roomSearchInput"
-                type="search"
-                autocomplete="off"
-                placeholder="検索"
-              />
+              <span class="sr-only">板内検索</span>
+              <input id="roomSearchInput" type="search" autocomplete="off" placeholder="検索" />
             </label>
 
             <select id="roomSortSelect" class="toolbar-select" aria-label="並び替え">
@@ -50,16 +47,14 @@
               <option value="commentCount">レス</option>
             </select>
 
-            <button id="roomMegathreadToggle" class="button button-muted" type="button" aria-pressed="false">
-              メガ
-            </button>
+            <button id="roomMegathreadToggle" class="button button-muted" type="button" aria-pressed="false">継続スレ</button>
           </div>
           <div id="roomTags" class="tag-filter-row"></div>
         </section>
 
         <section class="panel">
           <div class="section-head">
-            <h2>スレ</h2>
+            <h2>スレッド</h2>
             <span id="roomResultSummary" class="count-label"></span>
           </div>
           <div id="roomThreadList"></div>

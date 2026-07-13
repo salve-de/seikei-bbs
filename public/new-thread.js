@@ -11,6 +11,7 @@ const url = new URL(window.location.href);
 const requestedRoom = url.searchParams.get("room") || "";
 const requestedTargetType = url.searchParams.get("targetType") || "";
 const requestedTargetId = url.searchParams.get("targetId") || "";
+const requestedTargetLabel = url.searchParams.get("targetLabel") || "";
 
 const state = {
   board: null,
@@ -73,6 +74,9 @@ function populateTargets() {
   }
   if (state.board.politicians.some((politician) => politician.id === requestedTargetId)) {
     elements.composerTargetId.value = requestedTargetId;
+  }
+  if (requestedTargetLabel) {
+    elements.composerTargetLabel.value = requestedTargetLabel.slice(0, 60);
   }
   updateTargetFields();
 }

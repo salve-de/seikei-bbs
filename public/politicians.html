@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>議員から探す | 政経板</title>
-    <meta name="description" content="議員に紐づく政治経済の議論を探す" />
+    <title>政治家 | 政経板</title>
+    <meta name="description" content="政治家のプロフィールと関連掲示板を探す" />
     <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/crowd.css" />
   </head>
   <body>
     <div class="app-shell">
@@ -16,19 +17,18 @@
             <span class="brand-copy"><strong>政経板</strong></span>
           </a>
           <nav class="primary-nav" aria-label="主要ページ">
-            <a class="nav-link" href="/">掲示板</a>
-            <a class="nav-link is-active" href="/politicians">議員</a>
-            <a class="nav-link" href="/new">新規スレ</a>
+            <a class="nav-link" href="/">時事・盛り上がり</a>
+            <a class="nav-link is-active" href="/politicians">政治家</a>
+            <a class="nav-link" href="/topics.html">政策・テーマ</a>
+            <a class="nav-link" href="/new">スレッドを立てる</a>
           </nav>
         </div>
-        <div id="roomTabs" class="room-strip" aria-label="部屋一覧"></div>
+        <div id="roomTabs" class="room-strip" aria-label="板を選ぶ"></div>
       </header>
 
       <main class="page">
         <section class="directory-head">
-          <div>
-            <h1>議員から探す</h1>
-          </div>
+          <h1>政治家</h1>
           <div class="directory-tools">
             <label class="field search-field">
               <span>氏名・会派・選挙区</span>
@@ -39,7 +39,6 @@
         </section>
 
         <div id="politicianGrid" class="politician-grid"></div>
-
       </main>
     </div>
 
