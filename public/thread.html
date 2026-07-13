@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>会場 | 政経板</title>
+    <title>スレッド | 政経板</title>
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/crowd.css" />
   </head>
@@ -13,9 +13,10 @@
         <div class="site-header-main">
           <a class="brand" href="/"><span class="brand-mark" aria-hidden="true"></span><span class="brand-copy"><strong>政経板</strong></span></a>
           <nav class="primary-nav" aria-label="主要ページ">
-            <a class="nav-link" href="/">盛り上がり</a>
-            <a class="nav-link" href="/politicians">人物</a>
-            <a class="nav-link" href="/new">会場を作る</a>
+            <a class="nav-link" href="/">時事・盛り上がり</a>
+            <a class="nav-link" href="/politicians">政治家</a>
+            <a class="nav-link" href="/topics.html">政策・テーマ</a>
+            <a class="nav-link" href="/new">スレッドを立てる</a>
           </nav>
         </div>
         <div id="roomTabs" class="room-strip" aria-label="板を選ぶ"></div>
@@ -26,7 +27,7 @@
         <article class="thread-lead">
           <div class="thread-lead-main">
             <div id="threadBadges" class="inline-row"></div>
-            <h1 id="threadTitle">会場</h1>
+            <h1 id="threadTitle">スレッド</h1>
             <p id="threadSummary"></p>
             <div id="threadMeta" class="meta-strip"></div>
           </div>
@@ -37,7 +38,7 @@
         </article>
 
         <details class="fuel-details" open>
-          <summary>元ネタ・最初の投稿</summary>
+          <summary>関連情報・最初の投稿</summary>
           <section id="threadSource" class="source-block"></section>
         </details>
 
@@ -73,7 +74,7 @@
         </div>
 
         <section id="relatedSection" class="panel" hidden>
-          <div class="section-head"><h2>関連する会場</h2></div>
+          <div class="section-head"><h2>関連するスレッド</h2></div>
           <div id="relatedThreads" class="flat-list"></div>
         </section>
       </main>
