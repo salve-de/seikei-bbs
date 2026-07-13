@@ -1,5 +1,5 @@
 {
-  "name": "political-economy-bulletin-board",
+  "name": "seikei-bbs",
   "version": "1.0.0",
   "main": "server.js",
   "scripts": {
