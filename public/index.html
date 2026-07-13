@@ -3,10 +3,11 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>政経板 | 政治経済の匿名掲示板</title>
-    <meta name="description" content="政治・経済について匿名で話せる掲示板" />
+    <title>政経板 | 政治経済の時事・匿名掲示板</title>
+    <meta name="description" content="政治家・政党・政策・経済テーマごとに、時事情報と匿名の反応を読んで書き込める掲示板" />
     <link rel="stylesheet" href="/styles.css" />
     <link rel="stylesheet" href="/crowd.css" />
+    <link rel="stylesheet" href="/home-identity.css" />
   </head>
   <body>
     <div class="app-shell">
@@ -17,18 +18,31 @@
             <span class="brand-copy"><strong>政経板</strong></span>
           </a>
           <nav class="primary-nav" aria-label="主要ページ">
-            <a class="nav-link is-active" href="/">盛り上がり</a>
-            <a class="nav-link" href="/politicians">人物</a>
-            <a class="nav-link" href="/new">会場を作る</a>
+            <a class="nav-link is-active" href="/">時事・盛り上がり</a>
+            <a class="nav-link" href="/politicians">政治家</a>
+            <a class="nav-link" href="/topics.html">政策・テーマ</a>
+            <a class="nav-link" href="/new">スレッドを立てる</a>
           </nav>
         </div>
         <div id="roomTabs" class="room-strip" aria-label="板を選ぶ"></div>
       </header>
 
       <main class="page">
-        <section class="crowd-intro" aria-labelledby="crowdTitle">
-          <div class="crowd-intro-copy">
-            <h1 id="crowdTitle">今、どこが沸いてる？</h1>
+        <section class="site-identity" aria-labelledby="siteIdentityTitle">
+          <div class="site-identity-copy">
+            <p class="site-identity-label">政治経済の時事・匿名掲示板</p>
+            <h1 id="siteIdentityTitle">政治家・政党・政策ごとの匿名掲示板</h1>
+            <p>時事ニュース、選挙、企業、税、物価、市場の動きについて、人物・テーマ別に最新の投稿を読んで匿名で書き込めます。</p>
+
+            <form id="siteSearchForm" class="site-search" role="search">
+              <div class="site-search-row">
+                <label class="sr-only" for="siteSearchInput">人物・政党・政策・企業・スレッドを検索</label>
+                <input id="siteSearchInput" type="search" autocomplete="off" placeholder="人物・政党・政策・企業を検索" />
+                <button class="button button-primary" type="submit">検索</button>
+              </div>
+              <div id="searchResults" class="search-results" hidden></div>
+            </form>
+            <div id="popularSearches" class="popular-searches" aria-label="人気の人物とテーマ"></div>
           </div>
 
           <form id="quickPostForm" class="quick-post-card">
@@ -59,14 +73,22 @@
             </div>
             <p id="quickPostFeedback" class="form-feedback" hidden></p>
             <div class="quick-post-actions">
-              <button id="quickSubmit" class="button button-primary quick-submit" type="submit">会場を作る</button>
+              <button id="quickSubmit" class="button button-primary quick-submit" type="submit">スレッドを立てる</button>
             </div>
           </form>
         </section>
 
+        <section class="current-section" aria-labelledby="currentTitle">
+          <div class="current-section-head">
+            <h2 id="currentTitle">最新・速報</h2>
+            <button id="showNewestButton" class="button button-muted" type="button">新着をすべて見る</button>
+          </div>
+          <div id="latestTopics" class="current-topic-list"></div>
+        </section>
+
         <section class="arena-section" aria-labelledby="hotArenaTitle">
           <div class="arena-section-head">
-            <div><h2 id="hotArenaTitle">今、沸いている会場</h2></div>
+            <div><h2 id="hotArenaTitle">今、沸いているスレッド</h2></div>
           </div>
           <div id="hotArenas" class="hot-arena-grid"></div>
         </section>
@@ -84,11 +106,15 @@
 
           <aside class="forum-sidebar">
             <section class="panel">
-              <div class="section-head"><h2>人物</h2></div>
+              <div class="section-head"><h2>動いている政治家</h2></div>
               <div id="featuredPoliticians" class="politician-list"></div>
             </section>
             <section class="panel">
-              <div class="section-head"><h2>テーマ</h2></div>
+              <div class="section-head"><h2>動いているテーマ</h2></div>
+              <div id="featuredTopics"></div>
+            </section>
+            <section class="panel">
+              <div class="section-head"><h2>板</h2></div>
               <div id="roomDirectory"></div>
             </section>
           </aside>
@@ -97,6 +123,7 @@
     </div>
 
     <script src="/shared.js"></script>
+    <script src="/topic-definitions.js"></script>
     <script src="/home.js"></script>
   </body>
 </html>
